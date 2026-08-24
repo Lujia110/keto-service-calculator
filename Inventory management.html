@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>27 SKU 库存驾驶舱 · 库存与订单承诺管理</title>
+<style>
+:root{
+  --brand:#1a2b4a; --brand-2:#24406e; --bg:#f5f7f5; --card:#ffffff;
+  --blue:#e8f0fb; --blue-bd:#b9cde7; --blue-tx:#1a2b4a;
+  --ov:#fff3cd; --ov-bd:#e6c96b; --ov-tx:#7a5b00;
+  --red:#e5484d; --red-bg:#fdeeee;
+  --yellow:#e8910f; --yellow-bg:#fdf4e3;
+  --green:#2f9e63; --green-bg:#edf7f1;
+  --gray:#8b949e; --line:#e3e8ee; --tx:#1a2332;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx);font-size:13px;line-height:1.5}
+.wrap{max-width:1680px;margin:0 auto;padding:20px 24px 60px}
+
+/* ===== Header ===== */
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:20px;color:var(--brand);font-weight:700;letter-spacing:.5px}
+h1 .sub{display:block;font-size:12px;font-weight:400;color:var(--gray);margin-top:4px;letter-spacing:0}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;color:var(--brand);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:.15s}
+.btn:hover{border-color:var(--brand);background:var(--blue)}
+.btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.primary:hover{background:var(--brand-2)}
+.switch{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px dashed var(--blue-bd);background:var(--blue);border-radius:6px;color:var(--blue-tx);font-size:12px;cursor:pointer;user-select:none}
+.switch.off{background:#fff;border-color:var(--line);color:var(--gray)}
+.switch .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.switch.off .dot{background:var(--gray)}
+
+/* ===== Summary cards ===== */
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:0 1px 2px rgba(20,40,60,.04)}
+.card .n{font-size:22px;font-weight:700;color:var(--brand);line-height:1.2}
+.card .l{font-size:11px;color:var(--gray);margin-top:2px}
+.card.danger .n{color:var(--red)} .card.warn .n{color:var(--yellow)} .card.ok .n{color:var(--green)}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}
+
+/* ===== Legend ===== */
+.legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:12px;color:#4a5568}
+.legend b{color:var(--brand)}
+.leg{display:flex;align-items:center;gap:5px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.blue{background:var(--blue);border:1px solid var(--blue-bd)}
+.sw.ov{background:var(--ov);border:1px solid var(--ov-bd)}
+.sw.plain{background:#fff;border:1px solid var(--line)}
+.st{width:12px;height:12px;border-radius:50%;display:inline-block}
+.st.r{background:var(--red)} .st.y{background:var(--yellow)} .st.g{background:var(--green)}
+
+/* ===== Tabs ===== */
+.tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:2px solid var(--line)}
+.tab{padding:9px 18px;border:none;background:none;font-size:14px;color:#5a6675;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:500}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+.tab .badge{display:inline-block;min-width:16px;padding:0 4px;border-radius:8px;background:var(--red);color:#fff;font-size:10px;line-height:16px;margin-left:4px}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ===== Table ===== */
+.tbl-wrap{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:calc(100vh - 320px);box-shadow:0 1px 3px rgba(20,40,60,.05)}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:max-content}
+thead th{position:sticky;top:0;z-index:20;background:#f0f4f9;color:var(--brand);font-weight:600;font-size:11.5px;white-space:nowrap;padding:9px 8px;border-bottom:2px solid var(--brand);border-right:1px solid var(--line)}
+tbody td{padding:3px 4px;border-bottom:1px solid #eef1f5;border-right:1px solid #f2f4f7;white-space:nowrap}
+tbody tr:hover td{background:#f8fafc}
+th.sticky,td.sticky{position:sticky;background:#fff;z-index:10}
+th.sticky{background:#f0f4f9;z-index:30}
+td.sticky-1{left:0;min-width:86px} th.sticky-1{left:0;min-width:86px}
+td.sticky-2{left:86px;min-width:130px} th.sticky-2{left:86px;min-width:130px}
+tbody tr:hover td.sticky{background:#f2f6fb}
+
+input.cell,select.cell{width:100%;min-width:56px;border:1px solid transparent;background:transparent;padding:4px 5px;border-radius:4px;font-size:12.5px;font-family:inherit;color:var(--tx);text-align:right}
+input.cell.l,select.cell.l{text-align:left}
+input.cell:focus,select.cell:focus{outline:none;border-color:var(--brand);background:#fff;box-shadow:0 0 0 2px rgba(26,43,74,.12)}
+input.cell.auto,select.cell.auto{background:var(--blue);border-color:var(--blue-bd);color:var(--blue-tx);font-weight:600;cursor:not-allowed}
+input.cell.auto[readonly]{opacity:.92}
+input.cell.auto.ov{background:var(--ov);border-color:var(--ov-bd);color:var(--ov-tx);cursor:pointer}
+.cell-wrap{position:relative;display:flex;align-items:center}
+.reset-x{position:absolute;right:2px;top:50%;transform:translateY(-50%);border:none;background:var(--ov-bd);color:#5a4300;font-size:10px;width:15px;height:15px;border-radius:3px;cursor:pointer;line-height:1;padding:0;display:none}
+.cell-wrap:hover .reset-x{display:block}
+.reset-x:hover{background:var(--ov-tx);color:#fff}
+input.cell.st-num{font-weight:700}
+.st-pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700;white-space:nowrap}
+.st-pill.r{background:var(--red-bg);color:var(--red)}
+.st-pill.y{background:var(--yellow-bg);color:var(--yellow)}
+.st-pill.g{background:var(--green-bg);color:var(--green)}
+.st-pill.n{background:#f1f3f5;color:var(--gray)}
+.risk-tag{font-size:12px;font-weight:700}
+/* ===== 右侧固定状态列（横向滚动时状态永远可见） ===== */
+th.sticky-r,td.sticky-r{position:sticky;right:0;z-index:11}
+th.sticky-r{background:#f0f4f9;z-index:31}
+td.sticky-r{background:#fff}
+tbody tr:hover td.sticky-r{background:#f2f6fb}
+/* ===== 危险行整行高亮 ===== */
+tbody tr.row-danger td{background:var(--red-bg)}
+tbody tr.row-danger td.sticky-r{background:var(--red-bg)}
+tbody tr.row-danger:hover td{background:#fbe3e4}
+tbody tr.row-danger:hover td.sticky-r{background:#fbe3e4}
+/* ===== 状态原因 tooltip（hover 状态徽章显示"为什么"） ===== */
+.st-pill{position:relative;cursor:help}
+.st-pill[data-tip]::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1a2332;color:#fff;font-size:11px;line-height:1.55;padding:7px 11px;border-radius:6px;min-width:210px;max-width:330px;white-space:normal;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:99;opacity:0;pointer-events:none;transition:opacity .15s .05s;font-weight:400;text-align:left}
+.st-pill[data-tip]:hover::after{opacity:1}
+/* ===== 风险Top条 ===== */
+.risk-top{display:none;margin-bottom:12px;padding:10px 14px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--red);border-radius:8px;font-size:12px}
+.risk-top .rt-label{font-weight:700;color:var(--brand);margin-right:8px;line-height:2}
+.rt-chip{display:inline-flex;align-items:center;gap:6px;margin:3px 6px 3px 0;padding:5px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px;color:var(--tx);transition:.15s;vertical-align:top}
+.rt-chip.r{background:var(--red-bg);border-color:#f3c1c3;color:var(--red)}
+.rt-chip.y{background:var(--yellow-bg);border-color:#f0d9a8;color:#8a5a00}
+.rt-chip b{font-weight:700}
+.rt-chip em{display:block;font-style:normal;font-weight:400;color:var(--gray);font-size:11px;max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rt-chip:hover{box-shadow:0 2px 8px rgba(0,0,0,.14);transform:translateY(-1px)}
+/* ===== 卡片可点击（跳转定位） ===== */
+.card.clickable{cursor:pointer;transition:.15s}
+.card.clickable:hover{box-shadow:0 4px 14px rgba(26,43,74,.14);transform:translateY(-2px)}
+/* ===== 定位闪烁（点击Top/卡片后高亮该行） ===== */
+@keyframes flashRow{0%,100%{background:transparent}30%,60%{background:var(--ov)}}
+tr.flash td{animation:flashRow 1s ease 3}
+td.narrow{width:34px;text-align:center}
+.del{border:none;background:none;color:#c4ccd6;font-size:15px;cursor:pointer;padding:2px 4px;border-radius:4px}
+.del:hover{color:var(--red);background:var(--red-bg)}
+.add-row{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;border:1px dashed var(--brand);border-radius:8px;background:#fff;color:var(--brand);font-size:12.5px;cursor:pointer}
+.add-row:hover{background:var(--blue)}
+.notes{margin-top:12px;font-size:11.5px;color:var(--gray);line-height:1.7}
+.notes code{background:#fff;border:1px solid var(--line);padding:1px 5px;border-radius:4px;color:var(--brand)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.2);opacity:0;transition:.25s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+.status-flag{font-size:11px;color:var(--gray)}
+.tbl-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--gray)}
+.note-tbl{border-collapse:collapse;margin:6px 0;font-size:11.5px;background:#fff}
+.note-tbl th,.note-tbl td{border:1px solid var(--line);padding:4px 10px;text-align:left}
+.note-tbl th{background:var(--blue);font-weight:600}
+.note-tbl td:last-child{text-align:right;font-weight:600;color:var(--brand)}
+.week-tag{display:inline-block;background:var(--blue);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:11.5px;color:var(--brand)}
+/* 客户订单状态面板 */
+.cust-panel{margin-bottom:10px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--blue)}
+.cust-panel h4{margin:0 0 2px;font-size:12.5px;color:var(--brand)}
+.cust-panel .sub{font-size:11px;color:var(--gray);margin:0 0 8px}
+.cust-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.cust-tbl th{text-align:left;font-weight:600;color:var(--gray);padding:5px 6px;border-bottom:1px solid var(--line);font-size:11px;white-space:nowrap}
+.cust-tbl td{padding:4px 6px;border-bottom:1px solid #eef1f5;white-space:nowrap}
+.cust-tbl tr:last-child td{border-bottom:none}
+.cust-tbl select.cell{min-width:150px}
+.cust-tbl input.cell{min-width:120px}
+.eff-tag{font-size:10px;color:var(--gray);margin-top:1px;white-space:nowrap;line-height:1.3}
+.eff-tag b{color:var(--brand);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>📦 27 SKU 库存驾驶舱
+      <span class="sub">C端可上架 = 良品库存 − OEM已锁定 − 安全库存 ｜ 库存决定交期 · 高概率OEM只预警、不锁死</span>
+    </h1>
+    <div class="toolbar">
+      <div class="switch off" id="overrideSwitch" title="打开后，蓝底自动计算字段可手动覆盖">
+        <span class="dot"></span><span id="overrideTxt">🔒 蓝底自动计算（默认不可改）</span>
+      </div>
+      <div class="switch off" id="riskTopSwitch" title="开启后，主表按 危险→注意→正常 排序显示（不动你录入的数据，只改显示顺序）">
+        <span class="dot"></span><span>⇅ 风险置顶</span>
+      </div>
+      <button class="btn" id="resetOvBtn" style="display:none">↺ 重置全部覆盖</button>
+      <button class="btn" id="exportBtn">⤓ 导出CSV（当前TAB）</button>
+      <button class="btn" id="demoBtn">↻ 恢复示例数据</button>
+      <button class="btn danger" id="clearBtn">🗑 清空</button>
+    </div>
+  </header>
+
+  <!-- 汇总卡片 -->
+  <div class="cards" id="cards"></div>
+
+  <!-- 风险Top条：一打开就知道今天先处理谁 -->
+  <div class="risk-top" id="riskTop"></div>
+
+  <!-- 图例 -->
+  <div class="legend">
+    <span class="leg"><span class="sw blue"></span> <b>蓝底</b> = 自动计算联动（默认不可改）</span>
+    <span class="leg"><span class="sw ov"></span> <b>黄底</b> = 已手动覆盖的值（可点↺还原）</span>
+    <span class="leg"><span class="sw plain"></span> <b>白底</b> = 每天可手动调整</span>
+    <span class="leg"><span class="st r"></span>危险</span>
+    <span class="leg"><span class="st y"></span>注意</span>
+    <span class="leg"><span class="st g"></span>正常</span>
+    <span class="status-flag">数据保存在本机浏览器（localStorage），刷新不丢</span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="main">📊 库存驾驶舱（主表）</button>
+    <button class="tab" data-tab="oem">🤝 OEM需求/订单<span class="badge" id="oemRiskBadge" style="display:none">0</span></button>
+    <button class="tab" data-tab="consume">📈 C端消耗记录</button>
+    <button class="tab" data-tab="scrap">🗑️ 报废/异常记录</button>
+  </div>
+
+  <!-- ============ TAB 1 主表 ============ -->
+  <div class="tab-panel active" id="panel-main">
+    <div class="tbl-wrap" id="mainWrap"><table id="mainTbl"></table></div>
+    <div class="tbl-footer"><span>一行 = 一个SKU ｜ 每日维护：账面、待报废、在途、C端实际/预测、安全库存</span>
+      <button class="add-row" id="addMainBtn">＋ 添加 SKU 行</button></div>
+    <div class="notes">
+      <b>概念口径：</b><b>当前账面库存</b> = 仓库系统里记录的数量（含待报废的）；<b>良品库存</b> = 账面 − 待报废/异常 = 真正可发货的数量。<br>
+      <b>核心公式：</b>良品 = 账面 − 待报废 ｜ C端可上架 = 良品 − OEM已锁定 − 安全库存 ｜ 覆盖周数 = 可上架 ÷ 周均消耗（取实际与预测的较大值，即保守估计）<br>
+      <b>OEM高概率折算比例（计入主表「OEM高概率」列）：</b>
+      意向 0%（刚沟通、询价，不影响库存）｜ 高概率 <b>50%</b>（产品/价格/数量基本确认，有明确采购计划）｜ 高概率+明确时间 <b>75%</b>（已确认预计下单/交货时间，内部流程启动，70%~80%取中）｜ 已确认订单 <b>100%</b>（合同/PO/定金确认，必须锁库存）｜ 已下单 <b>100%</b>（正式订单，实际占用库存）。<br>
+      ⚠️ 高概率只做<b>预警不锁库存</b>（按比例折算计入「OEM高概率」列）；「OEM已锁定」仅统计已确认订单+已下单（100%）。折算比例在代码顶部 <code>OEM_STATUS</code> 可调整。
+    </div>
+  </div>
+
+  <!-- ============ TAB 2 OEM表 ============ -->
+  <div class="tab-panel" id="panel-oem">
+    <div class="cust-panel" id="custPanel"></div>
+    <div class="tbl-wrap" id="oemWrap"><table id="oemTbl"></table></div>
+    <div class="tbl-footer"><span>一行 = 一个 客户×SKU ｜ 状态/日期留空 = 跟随上方客户默认 ｜ 蓝底列随主表/状态自动联动</span>
+      <button class="add-row" id="addOemBtn">＋ 添加 OEM 订单行</button></div>
+    <div class="notes">
+      <b>交付规则（库存决定交期）：</b><br>
+      ① 可分配 ≥ 需求 → <b>现货/短期交付</b>，给正常交期；<br>
+      ② 部分有货 → 按「库存可满足」先排一批，缺口部分按采购周期另确认，可分批交付；<br>
+      ③ 完全缺货 → 才告知：该SKU需美国采购，标准采购周期约 <code>8–10周</code>，以订单确认及排期为准。<br>
+      <b>状态 → 库存计算比例：</b>意向 0% ｜ 高概率 <b>50%</b> ｜ 高概率+明确时间 <b>75%</b> ｜ 已确认订单/已下单 <b>100%</b><br>
+      缺口按折算比例计算：高概率订单只预警，不直接触发采购；已确认/已下单订单有缺口才标 🔴 交付风险。<br>
+      <b>状态怎么填：</b>大多数订单状态是按客户整体的（如客户A确认要下全部27个SKU）→ 在上方「客户订单状态」设一次即可，该客户所有行默认「跟随客户」自动生效；<br>个别产品状态不同 → 在那一行单独下拉选择即可覆盖。
+    </div>
+  </div>
+
+  <!-- ============ TAB 3 C端消耗 ============ -->
+  <div class="tab-panel" id="panel-consume">
+    <div class="tbl-wrap" id="consumeWrap"><table id="consumeTbl"></table></div>
+    <div class="tbl-footer"><span>一行 = 一个SKU本周 ｜ 填SKU自动带出产品名称+本周预测，日期自动算周次；每天/每周更新「本周实际」</span>
+      <div><button class="btn primary" id="syncConsumeBtn">⇄ 同步最近10周实际 → 主表</button>
+      <button class="add-row" id="addConsumeBtn" style="margin-top:0">＋ 添加记录</button></div></div>
+    <div class="notes">
+      <b>字段口径：</b>「本周预测」= 主表「未来10周C端预测」÷ 10（周均，自动带出可改）；「本周实际」= 本周至今实际消耗（每天更新累计值）；偏差 = 实际 − 预测。<br>
+      「同步最近10周实际 → 主表」会把每个SKU最近10条记录的「本周实际」求和写入主表「过去10周C端实际」，并更新「本周C端实际」。
+    </div>
+  </div>
+
+  <!-- ============ TAB 4 报废 ============ -->
+  <div class="tab-panel" id="panel-scrap">
+    <div class="tbl-wrap" id="scrapWrap"><table id="scrapTbl"></table></div>
+    <div class="tbl-footer"><span>报废/异常单独留痕，避免「库存怎么少了300」说不清</span>
+      <div><button class="btn primary" id="syncScrapBtn">⇄ 已确认报废 → 计入主表待报废</button>
+      <button class="add-row" id="addScrapBtn" style="margin-top:0">＋ 添加记录</button></div></div>
+    <div class="notes">
+      <b>报废是否计入总库存？</b>是。报废通过「待报废/异常」直接从主表<b>账面库存</b>中扣除（良品 = 账面 − 待报废），无论来源是 OEM 客户还是 C 端，统一扣。<br>
+      <b>报废来源</b>：OEM客户报废 / C端报废 / 其他，逐条记录来源，方便复盘是渠道原因还是产品质量原因。<br>
+      流程：先记录（状态=待确认）→ 确认后点「⇄ 已确认报废 → 计入主表待报废」，自动累加到主表待报废字段并标记已扣库存。
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================================================================
+   数据模型
+   main:  sku/detail/book/scrap/transit/past10/thisWeek/forecast/safety
+   oem:   customer/sku/qty/status(意向|高概率|高概率+明确时间|已确认订单|已下单，''=跟随客户)/orderDate/needDate
+   customers: {'客户名':{status,orderDate,needDate}} 客户级默认订单状态（OEM行留空时自动生效）
+   consume: sku/name/date/week(自动)/forecast/actual
+   scrap: date/sku/name/qty/reason/status/source(C端|OEM|其他)/deducted
+   overrides: {"main-0-good":true,...} 手动覆盖的自动字段
+   overrideMode: 是否允许覆盖蓝底字段
+================================================================ */
+const KEY = 'inventory_cockpit_v3';
+
+/* ============ OEM状态 → 库存计算比例（可调整） ============
+   意向        0%   刚沟通/询价，不影响库存，只记录机会
+   高概率      50%  产品/价格/数量基本确认，有明确采购计划
+   高概率+明确时间 75%  已确认预计下单/交货时间，内部流程已启动
+   已确认订单  100%  合同/PO/定金已确认，必须锁库存
+   已下单      100%  正式订单，实际占用库存
+   （70%-80%区间默认取75%，如需调整改下面数值）
+======================================================== */
+const OEM_STATUS = {
+  '意向':          {ratio:0.00, lock:false, warn:false},
+  '高概率':        {ratio:0.50, lock:false, warn:true },
+  '高概率+明确时间': {ratio:0.75, lock:false, warn:true },
+  '已确认订单':     {ratio:1.00, lock:true,  warn:false},
+  '已下单':        {ratio:1.00, lock:true,  warn:false}
+};
+const OEM_STATUS_KEYS = Object.keys(OEM_STATUS);
+/* 高概率预警折算比例（'高概率+明确时间'用，可手动调 0.70~0.80） */
+const PROB_RATIO_CONFIRMED = 0.75;
+
+function defaultData(){
+  return {
+    overrideMode:false,
+    riskTop:false,
+    overrides:{},
+    main:[
+      {sku:'SKU001',detail:'橙袋A',book:10000,scrap:500,transit:3000,past10:5000,thisWeek:620,forecast:5500,safety:1000},
+      {sku:'SKU002',detail:'橙袋B',book:8000,scrap:0,transit:0,past10:5000,thisWeek:700,forecast:6000,safety:1000},
+      {sku:'SKU003',detail:'橙袋C',book:12000,scrap:200,transit:4000,past10:4000,thisWeek:800,forecast:4500,safety:2000},
+      {sku:'SKU004',detail:'黄金深海鱼油',book:15000,scrap:0,transit:6000,past10:6000,thisWeek:900,forecast:8000,safety:1500}
+    ],
+    oem:[
+      {customer:'客户A',sku:'SKU001',qty:5000,status:'',orderDate:'',needDate:''},
+      {customer:'客户A',sku:'SKU002',qty:2000,status:'',orderDate:'',needDate:''},
+      {customer:'客户B',sku:'SKU003',qty:2000,status:'',orderDate:'',needDate:''},
+      {customer:'客户C',sku:'SKU005',qty:3000,status:'',orderDate:'',needDate:''}
+    ],
+    customers:{
+      '客户A':{status:'高概率+明确时间', orderDate:'2026-09-10', needDate:'2026-10-15'},
+      '客户B':{status:'已确认订单', orderDate:'2026-08-25', needDate:'2026-09-15'},
+      '客户C':{status:'意向', orderDate:'', needDate:''}
+    },
+    consume:[
+      {sku:'SKU001',name:'橙袋A',date:'2026-08-10',week:'',forecast:550,actual:520},
+      {sku:'SKU001',name:'橙袋A',date:'2026-08-17',week:'',forecast:550,actual:580},
+      {sku:'SKU002',name:'橙袋B',date:'2026-08-17',week:'',forecast:600,actual:610}
+    ],
+    scrap:[
+      {date:'2026-08-21',sku:'SKU001',name:'橙袋A',qty:100,reason:'破损',status:'已确认报废',source:'C端',deducted:'否'}
+    ]
+  };
+}
+
+let state = load();
+function load(){
+  try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.main){ if(s.riskTop===undefined) s.riskTop=false; return s; } }catch(e){}
+  return defaultData();
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+/* ============ 派生计算 ============ */
+function goodOf(m){ return num(m.book) - num(m.scrap); }
+/* 生效的OEM状态：行级状态 > 客户级默认 > 意向（客户A下27个SKU通常同一状态，只需在下方客户面板设一次） */
+function effStatus(o){
+  if(o.status) return o.status;
+  const c = (state.customers||{})[o.customer];
+  return (c && c.status) ? c.status : '意向';
+}
+function effOrderDate(o){ return o.orderDate || ((state.customers||{})[o.customer]?.orderDate) || ''; }
+function effNeedDate(o){  return o.needDate  || ((state.customers||{})[o.customer]?.needDate)  || ''; }
+/* OEM已锁定 = 已确认订单+已下单（100%锁库存） */
+function oemLockedOf(sku){ return state.oem.filter(o=>o.sku===sku && OEM_STATUS[effStatus(o)] && OEM_STATUS[effStatus(o)].lock).reduce((s,o)=>s+num(o.qty),0); }
+/* OEM高概率预警 = 高概率×50% + 高概率+明确时间×75%（按比例折算，不锁死） */
+function oemProbOf(sku){ return state.oem.filter(o=>o.sku===sku && OEM_STATUS[effStatus(o)] && OEM_STATUS[effStatus(o)].warn).reduce((s,o)=>s+num(o.qty)*OEM_STATUS[effStatus(o)].ratio,0); }
+function weeklyAvg(m){
+  const actual = (num(m.past10) + num(m.thisWeek)) / 11;
+  const forecast = num(m.forecast) > 0 ? num(m.forecast)/10 : 0;
+  return Math.max(actual, forecast); // 取保守（较大）值
+}
+/* 蓝底字段：若被手动覆盖则用覆盖值参与联动计算，否则用系统计算值 */
+function valOrOv(key, calc){
+  return isOv(key) ? num((state.overrideVals||{})[key]) : calc;
+}
+function calcMain(i){
+  const m = state.main[i];
+  const good   = valOrOv(`main-${i}-good`,   goodOf(m));
+  const locked = valOrOv(`main-${i}-locked`, oemLockedOf(m.sku));
+  const prob   = valOrOv(`main-${i}-prob`,   oemProbOf(m.sku));
+  const avail  = valOrOv(`main-${i}-avail`,  good - locked - num(m.safety));
+  const w = weeklyAvg(m);
+  const covC = w>0 ? avail/w : null;                    // C端覆盖周数
+  const covAll = w>0 ? (good - num(m.safety) - locked - prob)/w : null; // 综合覆盖（含OEM高概率）
+  let st, reason;
+  if(avail < 0){
+    st = '🔴 危险';
+    reason = `C端可上架为负：良品${fmt(good)} − OEM锁定${fmt(locked)} − 安全库存${fmt(m.safety)} = ${fmt(avail)}。库存已被OEM/安全库存吃穿，C端应立即停售并补货`;
+  }
+  else if(covC===null){
+    st = '🟢 正常';
+    reason = '暂无C端消耗数据（周均=0），无法估算覆盖周数，建议补录C端消耗记录';
+  }
+  else if(covC < 8){
+    st = '🔴 危险';
+    reason = `C端覆盖仅 ${round1(covC)}周 < 8周警戒线（可上架${fmt(avail)} ÷ 周均${fmt(w)}）。按8-10周采购周期，现在就该启动补货`;
+  }
+  else if(covC < 12){
+    st = '🟡 注意';
+    reason = `C端覆盖 ${round1(covC)}周 < 12周观察线（可上架${fmt(avail)} ÷ 周均${fmt(w)}），关注消耗趋势，提前准备补货`;
+  }
+  else if(covAll!==null && covAll < 8){
+    st = '🔴 危险';
+    reason = `C端单看 ${round1(covC)}周安全，但叠加OEM后综合覆盖仅 ${round1(covAll)}周 < 8周（OEM锁定${fmt(locked)} + 高概率预警${fmt(prob)}）。小心OEM订单吃掉库存，需协调交期或补货`;
+  }
+  else if(covAll!==null && covAll < 12){
+    st = '🟡 注意';
+    reason = `C端 ${round1(covC)}周，叠加OEM后综合覆盖 ${round1(covAll)}周 < 12周（OEM锁定${fmt(locked)} + 高概率预警${fmt(prob)}），留意OEM交期与补货节奏`;
+  }
+  else{
+    st = '🟢 正常';
+    reason = `C端覆盖 ${round1(covC)}周，综合覆盖 ${round1(covAll)}周，均在安全线（12周）以上`;
+  }
+  return {good, locked, prob, avail, w, covC, covAll, st, reason};
+}
+function calcOem(i){
+  const o = state.oem[i];
+  const effSt = effStatus(o);
+  const st = OEM_STATUS[effSt] || {ratio:0, lock:false, warn:false};
+  const mi = state.main.findIndex(m=>m.sku===o.sku);
+  const m = mi>=0 ? state.main[mi] : null;
+  const detail = m ? m.detail : (o.sku ? '— 主表无此SKU' : '—');
+  // 意向订单：只展示参考信息，不承诺、不占用、不计缺口
+  if(effSt==='意向'){
+    let alloc = 0;
+    if(m){ const c = calcMain(mi); alloc = Math.max(0, c.avail); }
+    return {detail, alloc, satisfied:'—', gap:'—', needBuy:'—', risk:'⚪ 待评估', reason:'意向订单：不占用库存、不承诺交期，客户正式确认后再评估'};
+  }
+  let alloc = 0;
+  if(m){
+    const c = calcMain(mi);
+    // 本行可分配 = 主表C端可上架 − 同SKU其他行（按各自比例折算的需求）
+    const other = state.oem.filter((x,j)=>j!==i && x.sku===o.sku && effStatus(x)!=='意向')
+                           .reduce((s,x)=>s+num(x.qty)*(OEM_STATUS[effStatus(x)]?.ratio||0),0);
+    alloc = Math.max(0, c.avail - other);
+  }
+  const qty = num(o.qty);
+  const effQty = qty * st.ratio;                 // 折算后的有效需求
+  const satisfied = Math.min(effQty, alloc);
+  const gap = Math.max(0, effQty - alloc);
+  const needBuy = gap>0 ? '是' : '否';
+  let risk, reason;
+  if(gap>0 && st.lock){
+    risk = '🔴 交付风险';
+    reason = `${effSt}需求 ${fmt(Math.round(effQty))} > 当前可分配 ${fmt(alloc)}，缺口 ${fmt(Math.round(gap))}。已承诺订单缺货 → 必须启动美国采购（8-10周）`;
+  }
+  else if(gap>0){
+    risk = '🟡 部分缺口';
+    reason = `折算需求 ${fmt(Math.round(effQty))}（${effSt} ×${Math.round(st.ratio*100)}%）vs 可分配 ${fmt(alloc)}，缺口 ${fmt(Math.round(gap))}，高概率预警`;
+  }
+  else{
+    risk = '🟢 现货可满足';
+    reason = `折算需求 ${fmt(Math.round(effQty))}（${effSt} ×${Math.round(st.ratio*100)}%）≤ 可分配 ${fmt(alloc)}，现货可满足`;
+  }
+  return {detail, alloc, satisfied, gap, needBuy, risk, reason};
+}
+
+/* ============ 渲染工具 ============ */
+const num = v=>{ v=parseFloat(v); return isNaN(v)?0:v; };
+const esc = s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt = v=>num(v).toLocaleString('en-US');
+function round1(v){ return v===null||v===undefined||isNaN(v) ? '—' : (Math.round(v*10)/10).toLocaleString('en-US'); }
+function today(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+/* 由日期计算周次：ISO周算法，返回「第N周」 */
+function weekOf(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  if(isNaN(d)) return '';
+  const day = (d.getDay()+6)%7; d.setDate(d.getDate()-day+3);
+  const firstThu = new Date(d.getFullYear(),0,4);
+  const fd = (firstThu.getDay()+6)%7; firstThu.setDate(firstThu.getDate()-fd+3);
+  const week = 1 + Math.round(((d-firstThu)/86400000 - 3 + (fd+4)%7)/7);
+  return '第'+week+'周';
+}
+/* 主表周均预测 = 未来10周预测 ÷ 10 */
+function weeklyForecastOf(sku){
+  const row = state.main.find(m=>m.sku===sku);
+  return row ? num(row.forecast)/10 : 0;
+}
+
+function isOv(key){ return !!state.overrides[key]; }
+
+function inputCell(rowKey, field, val, opts={}){
+  const {align='r', type='text', placeholder='', cls='', readonly=false} = opts;
+  return `<input class="cell ${align==='l'?'l':''} ${cls}" data-row="${rowKey}" data-field="${field}" type="${type}"
+    value="${esc(val)}" placeholder="${esc(placeholder)}" ${type==='number'?'inputmode="decimal"':''} ${readonly?'readonly':''}>`;
+}
+function selectCell(rowKey, field, val, options){
+  return `<select class="cell l" data-row="${rowKey}" data-field="${field}">` +
+    options.map(o=>{
+      const label = (typeof o==='object' && o!==null) ? o.label : o;
+      const value = (typeof o==='object' && o!==null) ? (o.value===undefined?o.label:o.value) : o;
+      return `<option value="${esc(value)}" ${String(val)===String(value)?'selected':''}>${esc(label)}</option>`;
+    }).join('') + `</select>`;
+}
+/* 蓝底自动字段：默认readonly；overrideMode开启且未覆盖→可编辑；已覆盖→黄底可点↺还原 */
+function autoCell(rowKey, field, val, extraHtml=''){
+  const key = rowKey+'-'+field;
+  const ov = isOv(key);
+  const readonly = !state.overrideMode && !ov;   // 默认锁定；覆盖模式下可编辑
+  const shown = ov ? ((state.overrideVals||{})[key] ?? '') : val; // 覆盖值回显
+  const tag = ov ? `<button class="reset-x" data-reset="${key}" title="还原为自动计算">↺</button>` : '';
+  return `<td><div class="cell-wrap">${inputCell(rowKey, field, shown, {cls:'auto'+(ov?' ov':''), type:'text', readonly})}${tag}</div>${extraHtml}</td>`;
+}
+/* 状态颜色判定（emoji与汉字都兼容） */
+function stColor(txt){
+  return txt.includes('红')||txt.includes('🔴') ? 'r'
+       : txt.includes('黄')||txt.includes('🟡') ? 'y'
+       : txt.includes('绿')||txt.includes('🟢') ? 'g' : 'n';
+}
+function statusCell(txt, tip, cls){
+  return `<td class="${cls||''}"><span class="st-pill ${stColor(txt)}"${tip?` data-tip="${esc(tip)}"`:''}>${esc(txt)}</span></td>`;
+}
+
+/* ============ 渲染 ============ */
+const MAIN_COLS = ['SKU','产品名称','当前账面库存','待报废/异常','良品库存','在途库存','过去10周C端实际','本周C端实际','未来10周C端预测','OEM已锁定','OEM高概率','安全库存','C端可上架库存','C端覆盖周数','综合库存状态'];
+
+function renderMain(){
+  let h = `<thead><tr>` + MAIN_COLS.map((c,i)=>`<th class="${i===0?'sticky sticky-1':i===1?'sticky sticky-2':i===MAIN_COLS.length-1?'sticky-r':''}">${c}</th>`).join('') + `<th></th></tr></thead><tbody>`;
+  // 风险置顶：按 危险→注意→正常 稳定排序（不动数据，只改显示顺序）
+  const rows = state.main.map((m,i)=>({m,i,c:calcMain(i)}));
+  if(state.riskTop) rows.sort((a,b)=>riskOrder(a.c.st)-riskOrder(b.c.st) || a.i-b.i);
+  rows.forEach(({m,i,c})=>{
+    const rk = `main-${i}`;
+    h += `<tr data-row-key="main-${i}" class="${stColor(c.st)==='r'?'row-danger':''}">
+      <td class="sticky sticky-1">${inputCell(rk,'sku',m.sku,{align:'l'})}</td>
+      <td class="sticky sticky-2">${inputCell(rk,'detail',m.detail,{align:'l'})}</td>
+      <td>${inputCell(rk,'book',m.book,{type:'number'})}</td>
+      <td>${inputCell(rk,'scrap',m.scrap,{type:'number'})}</td>
+      ${autoCell(rk,'good',c.good)}
+      <td>${inputCell(rk,'transit',m.transit,{type:'number'})}</td>
+      <td>${inputCell(rk,'past10',m.past10,{type:'number'})}</td>
+      <td>${inputCell(rk,'thisWeek',m.thisWeek,{type:'number'})}</td>
+      <td>${inputCell(rk,'forecast',m.forecast,{type:'number'})}</td>
+      ${autoCell(rk,'locked',c.locked)}
+      ${autoCell(rk,'prob',c.prob)}
+      <td>${inputCell(rk,'safety',m.safety,{type:'number'})}</td>
+      ${autoCell(rk,'avail',c.avail)}
+      <td class="st-num">${round1(c.covC)}<span class="status-flag">周</span></td>
+      ${statusCell(c.st, c.reason, 'sticky-r')}
+      <td class="narrow"><button class="del" data-del="main-${i}" title="删除行">✕</button></td>
+    </tr>`;
+  });
+  if(!state.main.length) h += `<tr><td colspan="${MAIN_COLS.length+1}" style="text-align:center;color:#8b949e;padding:30px">暂无SKU，点下方「添加 SKU 行」</td></tr>`;
+  h += `</tbody>`;
+  document.getElementById('mainTbl').innerHTML = h;
+  // 蓝底字段回填显示值（readonly时显示计算值）
+  state.main.forEach((m,i)=>{ fillAuto(`main-${i}`, calcMain(i)); });
+}
+
+/* 蓝底input readonly状态下显示计算值 */
+function fillAuto(rk, c){
+  ['good','locked','prob','avail'].forEach(f=>{
+    const el = document.querySelector(`input[data-row="${rk}"][data-field="${f}"]`);
+    if(!el) return;
+    if(isOv(rk+'-'+f)){ el.value = (state.overrideVals||{})[rk+'-'+f] ?? ''; }
+    else { el.value = c[f]; }
+  });
+}
+
+/* 客户级订单状态面板：设一次，该客户所有SKU行默认生效；个别产品可在OEM表单独覆盖 */
+function renderCustomers(){
+  const box = document.getElementById('custPanel');
+  if(!box) return;
+  const keys = Object.keys(state.customers||{});
+  let h = `<h4>👥 客户订单状态 <span class="sub" style="font-weight:400">（客户A下27个SKU通常同一状态 → 在这里设一次即可，OEM表该客户的行默认「跟随客户」，自动生效；个别产品不同 → 在OEM表那一行单独改）</span></h4>
+    <table class="cust-tbl"><thead><tr><th>客户</th><th>订单状态（默认）</th><th>预计下单</th><th>预计交货</th><th style="width:40px"></th></tr></thead><tbody>`;
+  if(!keys.length){
+    h += `<tr><td colspan="5" style="text-align:center;color:#8b949e;padding:14px">暂无客户。在OEM表填写客户名会自动登记；或点下方「＋ 添加客户」</td></tr>`;
+  }
+  keys.forEach(k=>{
+    const c = state.customers[k];
+    h += `<tr>
+      <td><b style="color:var(--brand)">${esc(k)}</b></td>
+      <td><select class="cell l" data-cust-key="${esc(k)}" data-field="status">` +
+        OEM_STATUS_KEYS.map(s=>`<option ${c.status===s?'selected':''}>${s}</option>`).join('') +
+        `</select></td>
+      <td><input class="cell l" data-cust-key="${esc(k)}" data-field="orderDate" type="date" value="${esc(c.orderDate||'')}"></td>
+      <td><input class="cell l" data-cust-key="${esc(k)}" data-field="needDate" type="date" value="${esc(c.needDate||'')}"></td>
+      <td class="narrow"><button class="del" data-del-cust="${esc(k)}" title="删除该客户默认状态">✕</button></td>
+    </tr>`;
+  });
+  h += `</tbody></table>
+    <button class="add-row" id="addCustBtn" style="margin-top:8px">＋ 添加客户</button>`;
+  box.innerHTML = h;
+  document.getElementById('addCustBtn').addEventListener('click', ()=>{
+    const name = prompt('客户名称：');
+    if(!name) return;
+    if(!state.customers) state.customers = {};
+    state.customers[name] = {status:'意向', orderDate:'', needDate:''};
+    save(); renderCustomers();
+    toast('已添加客户「'+name+'」，默认状态：意向（可改）');
+  });
+}
+
+const OEM_COLS = ['客户','SKU','产品名称','预计数量','订单状态','预计下单','预计交货','当前可分配库存','库存可满足','缺口','是否需要采购','交付风险',''];
+const CUST_STATUS_OPT = [{label:'跟随客户',value:''}, ...OEM_STATUS_KEYS.map(k=>({label:k,value:k}))];
+function renderOem(){
+  let h = `<thead><tr>` + OEM_COLS.map((c,i)=>`<th class="${i===OEM_COLS.length-2?'sticky-r':''}">${c}</th>`).join('') + `</tr></thead><tbody>`;
+  state.oem.forEach((o,i)=>{
+    const c = calcOem(i);
+    const rk = `oem-${i}`;
+    const effSt = effStatus(o);
+    const effTag = o.status ? '' : `（客户级：${esc(effSt)}）`; // 跟随客户 → 显示客户默认状态
+    const odTag = !o.orderDate && effOrderDate(o) ? `客户默认：${esc(effOrderDate(o))}` : '';
+    const ndTag = !o.needDate && effNeedDate(o) ? `客户默认：${esc(effNeedDate(o))}` : '';
+    h += `<tr>
+      <td>${inputCell(rk,'customer',o.customer,{align:'l',placeholder:'客户名'})}</td>
+      <td>${inputCell(rk,'sku',o.sku,{align:'l',placeholder:'SKU001'})}</td>
+      <td class="status-flag" style="color:#2a3a55;min-width:110px">${esc(c.detail)}</td>
+      <td>${inputCell(rk,'qty',o.qty,{type:'number'})}</td>
+      <td><div class="cell-wrap">${selectCell(rk,'status',o.status,CUST_STATUS_OPT)}</div>${effTag?`<div class="eff-tag">${effTag}</div>`:''}</td>
+      <td>${inputCell(rk,'orderDate',o.orderDate,{type:'date'})}${odTag?`<div class="eff-tag">${odTag}</div>`:''}</td>
+      <td>${inputCell(rk,'needDate',o.needDate,{type:'date'})}${ndTag?`<div class="eff-tag">${ndTag}</div>`:''}</td>
+      ${autoCell(rk,'alloc',c.alloc)}
+      ${autoCell(rk,'satisfied',c.satisfied)}
+      ${autoCell(rk,'gap',c.gap)}
+      <td class="st-num">${c.needBuy==='是' ? '<span class="st-pill r">是</span>' : c.needBuy==='否' ? '<span class="st-pill g">否</span>' : '<span class="st-pill n">—</span>'}</td>
+      ${statusCell(c.risk, c.reason, 'sticky-r')}
+      <td class="narrow"><button class="del" data-del="oem-${i}" title="删除行">✕</button></td>
+    </tr>`;
+  });
+  if(!state.oem.length) h += `<tr><td colspan="13" style="text-align:center;color:#8b949e;padding:30px">暂无OEM订单，点下方「添加 OEM 订单行」</td></tr>`;
+  h += `</tbody>`;
+  document.getElementById('oemTbl').innerHTML = h;
+  state.oem.forEach((o,i)=>{ fillAuto(`oem-${i}`, calcOem(i)); });
+}
+
+function renderConsume(){
+  let h = `<thead><tr><th>SKU</th><th>产品名称</th><th>日期</th><th>周次</th><th>本周预测</th><th>本周实际</th><th>偏差</th><th></th></tr></thead><tbody>`;
+  state.consume.forEach((c,i)=>{
+    const rk=`consume-${i}`;
+    const wk = c.week || weekOf(c.date) || '';
+    h += `<tr>
+      <td>${inputCell(rk,'sku',c.sku,{align:'l',placeholder:'SKU001'})}</td>
+      <td>${inputCell(rk,'name',c.name,{align:'l'})}</td>
+      <td>${inputCell(rk,'date',c.date,{type:'date'})}</td>
+      <td class="st-num"><span class="week-tag">${esc(wk)}</span></td>
+      <td>${inputCell(rk,'forecast',c.forecast,{type:'number'})}</td>
+      <td>${inputCell(rk,'actual',c.actual,{type:'number'})}</td>
+      <td class="st-num" style="color:${num(c.actual)-num(c.forecast)>0?'var(--red)':num(c.actual)-num(c.forecast)<0?'var(--green)':'inherit'}">
+        ${num(c.actual)-num(c.forecast)>0?'+':''}${fmt(num(c.actual)-num(c.forecast))}</td>
+      <td class="narrow"><button class="del" data-del="consume-${i}">✕</button></td>
+    </tr>`;
+  });
+  if(!state.consume.length) h += `<tr><td colspan="8" style="text-align:center;color:#8b949e;padding:30px">暂无记录</td></tr>`;
+  h += `</tbody>`;
+  document.getElementById('consumeTbl').innerHTML = h;
+}
+
+function renderScrap(){
+  let h = `<thead><tr><th>日期</th><th>SKU</th><th>产品</th><th>数量</th><th>原因</th><th>状态</th><th>报废来源</th><th>是否已扣库存</th><th></th></tr></thead><tbody>`;
+  state.scrap.forEach((s,i)=>{
+    const rk=`scrap-${i}`;
+    h += `<tr>
+      <td>${inputCell(rk,'date',s.date,{type:'date'})}</td>
+      <td>${inputCell(rk,'sku',s.sku,{align:'l'})}</td>
+      <td>${inputCell(rk,'name',s.name,{align:'l'})}</td>
+      <td>${inputCell(rk,'qty',s.qty,{type:'number'})}</td>
+      <td>${inputCell(rk,'reason',s.reason,{align:'l'})}</td>
+      <td>${selectCell(rk,'status',s.status,['已确认报废','待确认'])}</td>
+      <td>${selectCell(rk,'source',s.source,['C端','OEM','其他'])}</td>
+      <td>${selectCell(rk,'deducted',s.deducted,['否','是'])}</td>
+      <td class="narrow"><button class="del" data-del="scrap-${i}">✕</button></td>
+    </tr>`;
+  });
+  if(!state.scrap.length) h += `<tr><td colspan="9" style="text-align:center;color:#8b949e;padding:30px">暂无记录</td></tr>`;
+  h += `</tbody>`;
+  document.getElementById('scrapTbl').innerHTML = h;
+}
+
+function renderCards(){
+  const danger = state.main.filter((m,i)=>stColor(calcMain(i).st)==='r').length;
+  const warn   = state.main.filter((m,i)=>stColor(calcMain(i).st)==='y').length;
+  const ok     = state.main.length - danger - warn;
+  const riskOem = state.oem.filter((o,i)=>stColor(calcOem(i).risk)==='r').length;
+  const warnOem = state.oem.filter((o,i)=>stColor(calcOem(i).risk)==='y').length;
+  const totalGap = state.oem.reduce((s,o,i)=>s+calcOem(i).gap,0);
+  document.getElementById('cards').innerHTML = `
+    <div class="card"><div class="n">${state.main.length}</div><div class="l">SKU 总数</div></div>
+    <div class="card danger clickable" data-jump="r" title="点击定位到第一个危险SKU"><div class="n">${danger}</div><div class="l">🔴 危险 · 点击定位</div></div>
+    <div class="card warn clickable" data-jump="y" title="点击定位到第一个注意SKU"><div class="n">${warn}</div><div class="l">🟡 注意 · 点击定位</div></div>
+    <div class="card ok"><div class="n">${ok}</div><div class="l">🟢 正常</div></div>
+    <div class="card ${riskOem+warnOem?'danger':''}"><div class="n">${riskOem+warnOem}</div><div class="l">OEM 交付风险（红+黄）</div></div>
+    <div class="card"><div class="n">${fmt(totalGap)}</div><div class="l">OEM 采购缺口总量</div></div>`;
+  renderRiskTop();
+  const badge = document.getElementById('oemRiskBadge');
+  const n = riskOem+warnOem;
+  badge.textContent = n; badge.style.display = n? 'inline-block':'none';
+}
+
+/* 风险排序：危险0 / 注意1 / 正常2 */
+function riskOrder(st){ const c=stColor(st); return c==='r'?0:c==='y'?1:2; }
+/* 风险Top条：一打开就知道今天先处理谁（最多3个，点击定位到该行） */
+function renderRiskTop(){
+  const box = document.getElementById('riskTop');
+  if(!box) return;
+  const items = state.main.map((m,i)=>({i,m,c:calcMain(i)}))
+    .filter(x=>stColor(x.c.st)!=='g')
+    .sort((a,b)=>riskOrder(a.c.st)-riskOrder(b.c.st) || a.i-b.i)
+    .slice(0,3);
+  if(!items.length){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='block';
+  box.innerHTML = `<span class="rt-label">⚠️ 今日优先处理</span>` + items.map(x=>{
+    const col = stColor(x.c.st)==='r'?'r':'y';
+    return `<button class="rt-chip ${col}" data-scroll="${x.i}" title="点击定位到该SKU行">
+      <b>${esc(x.m.sku||'?')}</b>${esc(x.m.detail||'')} · ${esc(x.c.st)}<em>${esc(x.c.reason||'')}</em></button>`;
+  }).join('');
+}
+/* 定位到主表某行：切TAB → 滚动 → 闪烁高亮 */
+function scrollToRow(i){
+  switchToTab('main'); renderMain();
+  const row = document.querySelector(`#mainTbl tbody tr[data-row-key="main-${i}"]`);
+  if(!row) return;
+  row.scrollIntoView({behavior:'smooth', block:'center'});
+  row.classList.remove('flash'); void row.offsetWidth; row.classList.add('flash');
+  setTimeout(()=>row.classList.remove('flash'), 3200);
+}
+function switchToTab(tab){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.tab===tab));
+  document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active', x.id==='panel-'+tab));
+}
+
+function renderAll(){
+  renderCustomers(); renderMain(); renderOem(); renderConsume(); renderScrap(); renderCards();
+  updateResetBtn();
+  const sw = document.getElementById('overrideSwitch');
+  sw.classList.toggle('off', !state.overrideMode);
+  document.getElementById('overrideTxt').textContent = state.overrideMode ? '🔓 覆盖模式：蓝底字段已允许手动修改' : '🔒 蓝底自动计算（默认不可改）';
+  const rt = document.getElementById('riskTopSwitch');
+  if(rt) rt.classList.toggle('off', !state.riskTop);
+}
+
+/* ============ 输入处理（事件委托） ============ */
+const AUTO_FIELDS = { main:['good','locked','prob','avail'], oem:['alloc','satisfied','gap'] };
+document.addEventListener('input', e=>{
+  const t = e.target;
+  // 客户面板：客户级状态/日期修改 → 该客户所有「跟随客户」行即时生效
+  if(t.dataset && t.dataset.custKey){
+    const key = t.dataset.custKey;
+    const c = (state.customers||{})[key];
+    if(c){
+      const v = t.type==='number' ? (t.value===''?'':num(t.value)) : t.value;
+      if(t.dataset.field==='status') c.status = v;
+      else if(t.dataset.field==='orderDate') c.orderDate = v;
+      else if(t.dataset.field==='needDate') c.needDate = v;
+      save();
+      state.main.forEach((m,mi)=>{ updateMainRow(mi, calcMain(mi)); });
+      renderOem(); renderCards();
+      if(t.dataset.field==='status') toast('客户「'+key+'」默认状态已改为：'+v);
+    }
+    return;
+  }
+  if(t.dataset && t.dataset.field){
+    const [table, idx] = t.dataset.row.split('-');
+    const i = +idx, f = t.dataset.field;
+    const isAuto = (AUTO_FIELDS[table]||[]).includes(f);
+    if(isAuto) return; // 蓝底字段：覆盖模式下由 focusout 统一记录，避免增量刷新打断输入
+    const v = t.type==='number' ? (t.value===''?'':num(t.value)) : t.value;
+    if(table==='main'){ state.main[i][f]=v; }
+    else if(table==='oem'){
+      state.oem[i][f]=v;
+      // 填客户名 → 自动在客户面板登记（默认意向），省去每行勾选状态
+      if(f==='customer' && v){
+        if(!state.customers) state.customers={};
+        if(!state.customers[v]){ state.customers[v]={status:'意向',orderDate:'',needDate:''}; renderCustomers(); toast('已在客户面板登记「'+v+'」（默认状态：意向，可改）'); }
+      }
+    }
+    else if(table==='consume'){ state.consume[i][f]=v; }
+    else if(table==='scrap'){ state.scrap[i][f]=v; }
+    save();
+    // 增量刷新：只重算受影响的派生单元格，避免丢焦点
+    if(table==='main'){
+      const c = calcMain(i); updateMainRow(i,c); updateAllOemAuto(); renderCards();
+    }else if(table==='oem'){
+      updateAllOemAuto();
+      // 状态/数量/SKU变化影响主表锁定与高概率 → 只增量更新主表蓝字段，不重建DOM
+      if(f==='status'||f==='qty'||f==='sku'){
+        state.main.forEach((m,mi)=>{ updateMainRow(mi, calcMain(mi)); });
+        updateAllOemAuto(); renderCards();
+      }
+      else renderCards();
+    }else if(table==='consume'){
+      const row = state.consume[i];
+      // SKU → 自动带出 产品名称 + 本周预测（主表未来10周预测÷10）
+      if(f==='sku' && row.sku){
+        const m = state.main.find(x=>x.sku===row.sku);
+        if(m){
+          row.name = m.detail;
+          row.forecast = num(m.forecast)/10;
+          const nameEl = document.querySelector(`input[data-row="consume-${i}"][data-field="name"]`);
+          if(nameEl) nameEl.value = m.detail;
+          const fcEl = document.querySelector(`input[data-row="consume-${i}"][data-field="forecast"]`);
+          if(fcEl) fcEl.value = row.forecast;
+        } else {
+          row.name = '（主表无此SKU）';
+          const nameEl = document.querySelector(`input[data-row="consume-${i}"][data-field="name"]`);
+          if(nameEl) nameEl.value = row.name;
+        }
+      }
+      // 日期 → 自动更新周次
+      if(f==='date'){
+        row.week = weekOf(row.date) || '';
+        const wkEl = document.querySelector(`#consumeTbl tbody tr:nth-child(${i+1}) td:nth-child(4) .week-tag`);
+        if(wkEl) wkEl.textContent = row.week;
+      }
+    }
+  }
+});
+document.addEventListener('change', e=>{
+  const t = e.target;
+  // select 变更已由 input 事件增量处理；这里只做兜底全量对齐（select 无连续输入问题）
+  if(t.tagName==='SELECT' && t.dataset && t.dataset.field){
+    renderAll();
+  }
+});
+document.addEventListener('click', e=>{
+  const t = e.target;
+  // 风险Top条 / 状态卡片 → 定位到对应SKU行
+  if(t.dataset && t.dataset.scroll){ scrollToRow(+t.dataset.scroll); return; }
+  if(t.dataset && t.dataset.jump){
+    const idx = state.main.findIndex((m,i)=>stColor(calcMain(i).st)===t.dataset.jump);
+    if(idx>=0) scrollToRow(idx);
+    return;
+  }
+  // 删除客户默认状态
+  if(t.dataset && t.dataset.delCust){
+    const k = t.dataset.delCust;
+    delete (state.customers||{})[k];
+    save(); renderCustomers();
+    state.main.forEach((m,mi)=>{ updateMainRow(mi, calcMain(mi)); });
+    renderOem(); renderCards();
+    toast('已删除客户「'+k+'」的默认状态（其OEM行将按「意向」处理）');
+    return;
+  }
+  // 删除行
+  if(t.dataset && t.dataset.del){
+    const [table, idx] = t.dataset.del.split('-');
+    if(table==='main') state.main.splice(+idx,1);
+    else if(table==='oem') state.oem.splice(+idx,1);
+    else if(table==='consume') state.consume.splice(+idx,1);
+    else if(table==='scrap') state.scrap.splice(+idx,1);
+    save(); renderAll();
+    return;
+  }
+  // 重置单个覆盖
+  if(t.dataset && t.dataset.reset){
+    delete state.overrides[t.dataset.reset];
+    save(); renderAll();
+    toast('已还原为自动计算');
+    return;
+  }
+});
+
+/* 增量更新主表单行蓝字段 */
+function updateMainRow(i,c){
+  const rk=`main-${i}`;
+  const map={good:c.good, locked:c.locked, prob:c.prob, avail:c.avail};
+  Object.keys(map).forEach(f=>{
+    const el=document.querySelector(`input[data-row="${rk}"][data-field="${f}"]`);
+    if(!el) return;
+    if(isOv(rk+'-'+f)){ el.value=(state.overrideVals||{})[rk+'-'+f] ?? ''; }
+    else el.value=map[f];
+  });
+  // 覆盖周数 + 状态（用 data-row-key 定位，风险置顶排序后仍准确）
+  const row = document.querySelector(`#mainTbl tbody tr[data-row-key="main-${i}"]`);
+  if(row){
+    row.classList.toggle('row-danger', stColor(c.st)==='r');
+    const cells = row.querySelectorAll('td');
+    if(cells.length>15){ cells[13].innerHTML = round1(c.covC)+'<span class="status-flag">周</span>'; cells[14].innerHTML = statusPill(c.st, c.reason); }
+  }
+}
+function statusPill(txt, tip){
+  return `<span class="st-pill ${stColor(txt)}"${tip?` data-tip="${esc(tip)}"`:''}>${esc(txt)}</span>`;
+}
+/* 全量更新OEM所有蓝字段（局部） */
+function updateAllOemAuto(){
+  state.oem.forEach((o,i)=>{
+    const c = calcOem(i);
+    const rk=`oem-${i}`;
+    const row=document.querySelector(`#oemTbl tbody tr:nth-child(${i+1})`);
+    if(!row) return;
+    const cells=row.querySelectorAll('td');
+    if(cells.length<13) return;
+    cells[2].textContent=c.detail; cells[2].className='status-flag'; cells[2].style.color='#2a3a55';
+    const map={alloc:c.alloc, satisfied:c.satisfied, gap:c.gap};
+    Object.keys(map).forEach(f=>{
+      const el=document.querySelector(`input[data-row="${rk}"][data-field="${f}"]`);
+      if(el){ if(isOv(rk+'-'+f)) el.value=(state.overrideVals||{})[rk+'-'+f] ?? ''; else el.value=map[f]; }
+    });
+    cells[10].innerHTML = c.needBuy==='是' ? '<span class="st-pill r">是</span>' : c.needBuy==='否' ? '<span class="st-pill g">否</span>' : '<span class="st-pill n">—</span>';
+    cells[11].innerHTML = statusPill(c.risk, c.reason);
+  });
+}
+function renderAllOem(){ renderOem(); }
+
+/* ============ 工具按钮 ============ */
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+
+document.getElementById('overrideSwitch').addEventListener('click', function(){
+  state.overrideMode = !state.overrideMode;
+  if(!state.overrideMode){ /* 关掉时保留覆盖值但锁回 */ }
+  save(); renderAll();
+  toast(state.overrideMode ? '覆盖模式已开启：蓝底字段现在可手动改' : '已锁定：蓝底字段恢复为自动计算');
+});
+document.getElementById('resetOvBtn').addEventListener('click', ()=>{ state.overrides={}; save(); renderAll(); toast('已重置全部覆盖'); });
+document.getElementById('riskTopSwitch').addEventListener('click', function(){
+  state.riskTop = !state.riskTop;
+  save(); renderMain(); renderCards();
+  toast(state.riskTop ? '风险置顶已开启：主表按 危险→注意→正常 排序显示' : '风险置顶已关闭：恢复录入顺序');
+});
+
+function csvOf(rows){
+  return rows.map(r=>r.map(v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const tab = document.querySelector('.tab.active').dataset.tab;
+  let rows, name;
+  if(tab==='main'){ rows=[MAIN_COLS,...state.main.map((m,i)=>[m.sku,m.detail,m.book,m.scrap,calcMain(i).good,m.transit,m.past10,m.thisWeek,m.forecast,calcMain(i).locked,calcMain(i).prob,m.safety,calcMain(i).avail,round1(calcMain(i).covC),calcMain(i).st])]; name='库存驾驶舱-主表'; }
+  else if(tab==='oem'){ rows=[OEM_COLS.slice(0,12),...state.oem.map((o,i)=>[o.customer,o.sku,calcOem(i).detail,o.qty,effStatus(o),effOrderDate(o),effNeedDate(o),calcOem(i).alloc,calcOem(i).satisfied,calcOem(i).gap,calcOem(i).needBuy,calcOem(i).risk])]; name='OEM需求表'; }
+  else if(tab==='consume'){ rows=[['SKU','产品名称','日期','周次','本周预测','本周实际','偏差'],...state.consume.map(c=>[c.sku,c.name,c.date,c.week||weekOf(c.date)||'',c.forecast,c.actual,num(c.actual)-num(c.forecast)])]; name='C端消耗'; }
+  else { rows=[['日期','SKU','产品','数量','原因','状态','报废来源','是否已扣库存'],...state.scrap.map(s=>[s.date,s.sku,s.name,s.qty,s.reason,s.status,s.source||'C端',s.deducted])]; name='报废记录'; }
+  const blob=new Blob(['\ufeff'+csvOf(rows)],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${name}-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  toast('CSV 已导出');
+});
+document.getElementById('demoBtn').addEventListener('click', ()=>{ if(confirm('恢复示例数据？当前输入将被覆盖。')){ state=defaultData(); save(); renderAll(); toast('已恢复示例数据'); } });
+document.getElementById('clearBtn').addEventListener('click', ()=>{ if(confirm('⚠️ 确定清空全部数据？此操作不可撤销！')){ state={overrideMode:false,riskTop:false,overrides:{},main:[],oem:[],consume:[],scrap:[],customers:{}}; save(); renderAll(); toast('已清空'); } });
+
+/* 添加行 */
+document.getElementById('addMainBtn').addEventListener('click', ()=>{ state.main.push({sku:'',detail:'',book:0,scrap:0,transit:0,past10:0,thisWeek:0,forecast:0,safety:0}); save(); renderMain(); renderCards(); toast('已添加SKU行（请填写SKU编码）'); });
+document.getElementById('addOemBtn').addEventListener('click', ()=>{ state.oem.push({customer:'',sku:'',qty:0,status:'',orderDate:'',needDate:''}); save(); renderOem(); renderCards(); toast('已添加OEM行（状态留空=跟随客户，填客户名自动登记）'); });
+document.getElementById('addConsumeBtn').addEventListener('click', ()=>{ state.consume.push({week:'',date:today(),sku:'',name:'',forecast:0,actual:0}); save(); renderConsume(); toast('已添加（填SKU后自动带出产品名+本周预测）'); });
+document.getElementById('addScrapBtn').addEventListener('click', ()=>{ state.scrap.push({date:today(),sku:'',name:'',qty:0,reason:'',status:'待确认',source:'C端',deducted:'否'}); save(); renderScrap(); });
+
+/* 同步C端消耗 → 主表 */
+document.getElementById('syncConsumeBtn').addEventListener('click', ()=>{
+  const bySku={};
+  state.consume.forEach(c=>{ if(c.sku) (bySku[c.sku]=bySku[c.sku]||[]).push(c); });
+  let n=0;
+  Object.keys(bySku).forEach(sku=>{
+    const row=state.main.find(m=>m.sku===sku); if(!row) return;
+    const recs=bySku[sku];
+    const last10=recs.slice(-10);
+    row.past10=last10.reduce((s,r)=>s+num(r.actual),0);
+    row.thisWeek=num(recs[recs.length-1].actual);
+    n++;
+  });
+  save(); renderAll(); toast(`已同步 ${n} 个SKU（最近10周实际→主表）`);
+});
+
+/* 同步报废 → 主表待报废 */
+document.getElementById('syncScrapBtn').addEventListener('click', ()=>{
+  let n=0, missing=[];
+  state.scrap.forEach(s=>{
+    if(s.status==='已确认报废' && s.deducted!=='是' && num(s.qty)>0){
+      const row=state.main.find(m=>m.sku===s.sku);
+      if(row){ row.scrap=num(row.scrap)+num(s.qty); s.deducted='是'; n++; }
+      else missing.push(s.sku||'（未填SKU）');
+    }
+  });
+  save(); renderAll();
+  toast(missing.length ? `已计入 ${n} 条；未找到主表SKU：${missing.join('、')}` : `已计入主表待报废 ${n} 条`);
+});
+
+/* Tab 切换 */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    switchToTab(tab.dataset.tab);
+    renderAll(); // 切tab时全量刷新保证联动最新
+  });
+});
+
+/* 蓝底字段：覆盖模式下手动编辑后标记 override；同时清空覆盖后显示自动值 */
+document.addEventListener('focusout', e=>{
+  const t=e.target;
+  if(!(t.dataset && t.dataset.field)) return;
+  const [table,idx]=t.dataset.row.split('-');
+  const key=t.dataset.row+'-'+t.dataset.field;
+  if(!(AUTO_FIELDS[table]||[]).includes(t.dataset.field)) return;   // 只处理蓝底字段
+  if(!state.overrideMode) return;                                    // 锁定模式不改
+  if(isOv(key)){                                                     // 已覆盖：更新覆盖值
+    if(t.value!==(state.overrideVals||{})[key]){
+      state.overrideVals[key]=t.value; save();
+      refreshAllAuto();
+    }
+    return;
+  }
+  if(t.value !== t.defaultValue){                                    // 未覆盖但被改动 → 记录覆盖
+    state.overrides[key]=true;
+    if(!state.overrideVals) state.overrideVals={};
+    state.overrideVals[key]=t.value;
+    save();
+    t.classList.add('ov');
+    const wrap=t.closest('.cell-wrap');
+    if(wrap && !wrap.querySelector('.reset-x')){
+      const b=document.createElement('button');
+      b.className='reset-x'; b.dataset.reset=key; b.textContent='↺'; b.title='还原为自动计算';
+      wrap.appendChild(b);
+    }
+    refreshAllAuto();
+    updateResetBtn();
+    toast('已手动覆盖该字段（黄底），可点↺还原');
+  }
+});
+/* 局部联动刷新：主表蓝字段 + OEM蓝字段 + 汇总卡片（不重建DOM，不丢焦点） */
+function refreshAllAuto(){
+  state.main.forEach((m,mi)=>{ updateMainRow(mi, calcMain(mi)); });
+  updateAllOemAuto();
+  renderCards();
+}
+function updateResetBtn(){
+  document.getElementById('resetOvBtn').style.display = Object.keys(state.overrides).length ? 'inline-block':'none';
+}
+</script>
+</body>
+</html>
