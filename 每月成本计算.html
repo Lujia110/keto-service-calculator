@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成本结构看板（管理层）</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f7f6f3;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 32px 16px;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #777;
+    margin: 0 0 28px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .section-hint {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 16px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  }
+  .row:last-child { border-bottom: none; }
+  .row label {
+    font-size: 14px;
+    color: #444;
+    flex: 1;
+  }
+  .row .hint {
+    font-size: 11px;
+    color: #aaa;
+    display: block;
+    margin-top: 2px;
+  }
+  .row input {
+    width: 120px;
+    text-align: right;
+    font-size: 14px;
+    padding: 6px 10px;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
+    background: #fafafa;
+  }
+  .row input:focus {
+    outline: none;
+    border-color: #888;
+    background: #fff;
+  }
+  .row input.input-constant {
+    background: #dce8f5;
+    border-color: #b0c4d8;
+    color: #2a4a6b;
+  }
+  .row input.input-constant:focus {
+    background: #fff;
+    border-color: #888;
+    color: #1a1a1a;
+  }
+  .row input.small-input {
+    width: 100px;
+    font-size: 13px;
+  }
+  .row .computed {
+    font-size: 14px;
+    font-weight: 500;
+    color: #5b8c6e;
+    text-align: right;
+    min-width: 120px;
+  }
+  .row .computed.warn {
+    color: #c0392b;
+    font-weight: 600;
+  }
+  .param-legend {
+    font-size: 11px;
+    color: #aaa;
+    margin: 4px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .param-legend .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 0.5px solid #d5d5cf;
+  }
+  .swatch.constant { background: #dce8f5; border-color: #b0c4d8; }
+  .swatch.adjustable { background: #fff; border-color: rgba(0,0,0,0.15); }
+  .subgrid-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin: 14px 0 8px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(0,0,0,0.08);
+  }
+  .subgrid-title:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  /* 兼职内嵌子区域 */
+  .pt-sub {
+    padding-left: 16px;
+    margin: 4px 0;
+    border-left: 2px solid rgba(0,0,0,0.06);
+  }
+  .pt-summary {
+    font-size: 13px;
+    color: #444;
+    text-align: right;
+    font-weight: 500;
+    padding: 8px 0 4px;
+    border-top: 0.5px solid rgba(0,0,0,0.05);
+    margin-top: 4px;
+  }
+  .pt-summary span {
+    color: #5b8c6e;
+  }
+  .pt-warn {
+    background: #fdf2f2;
+    border-left: 3px solid #c0392b;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin: 6px 0;
+    font-size: 12px;
+    color: #962d22;
+  }
+
+  table.compare {
+    width: 100%;
+    font-size: 13px;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  table.compare th {
+    text-align: right;
+    color: #999;
+    font-weight: 400;
+    font-size: 12px;
+    padding: 6px 3px;
+  }
+  table.compare th:first-child { text-align: left; }
+  table.compare td {
+    text-align: right;
+    padding: 8px 3px;
+    border-top: 0.5px solid rgba(0,0,0,0.06);
+  }
+  table.compare td:first-child { text-align: left; color: #444; }
+  table.compare tr.total td {
+    font-weight: 500;
+    border-top: 1px solid rgba(0,0,0,0.15);
+  }
+  table.compare td.sub {
+    color: #888;
+    font-size: 12px;
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .metric {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .metric-label {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 4px;
+  }
+  .metric-value {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  /* 月度对比柱状图 */
+  .chart-wrap {
+    margin: 20px 0 8px;
+  }
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    height: 200px;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  .chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+  .chart-bar {
+    width: 80px;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.4s ease;
+    position: relative;
+  }
+  .chart-bar.old { background: #c9beae; }
+  .chart-bar.new { background: #5b8c6e; }
+  .chart-bar-value {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .chart-labels {
+    display: flex;
+    gap: 40px;
+    padding: 0 20px;
+    margin-top: 8px;
+  }
+  .chart-label {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+  }
+
+  /* 分摊比例饼图(简化为堆叠条) */
+  .alloc-bar {
+    display: flex;
+    height: 36px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .alloc-seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .alloc-seg.std5 { background: #b08a5a; }
+  .alloc-seg.std30 { background: #8a8f7c; }
+  .alloc-seg.custom { background: #5b6d8c; }
+  .alloc-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+  .legend-dot.std5 { background: #b08a5a; }
+  .legend-dot.std30 { background: #8a8f7c; }
+  .legend-dot.custom { background: #5b6d8c; }
+
+  @media (max-width: 600px) {
+    .metrics { grid-template-columns: 1fr; }
+    .row input { width: 90px; }
+    .chart-bars { gap: 16px; padding: 0 8px; }
+    .chart-bar { width: 50px; }
+    .chart-labels { gap: 16px; padding: 0 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>成本结构看板</h1>
+  <p class="subtitle">仅供管理层查看，所有数值可直接编辑，修改后自动重新计算</p>
+
+  <div class="card">
+    <h2>标品 · 产能与交期</h2>
+    <p class="section-hint">机器产出袋子，按每盒袋数换算为盒产能（应急包5袋/盒，人群包30袋/盒）。人工包装人效决定占用多少人天（用于成本分摊）。两段产能取决于哪个更慢（瓶颈）。</p>
+    <p class="param-legend"><span class="swatch constant"></span>基础参数（一般不动）<span class="swatch adjustable"></span>可调参数</p>
+
+    <div class="subgrid-title">标品机参数（机器产能）</div>
+    <div class="row">
+      <label>机器速度<span class="hint">袋/分钟</span></label>
+      <input type="number" id="m-speed" value="18" step="0.5" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>每日运行时长<span class="hint">小时</span></label>
+      <input type="number" id="m-hours" value="7" step="0.5" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row" style="border-bottom:none;">
+      <label>机器日产能（袋）<span class="hint">袋/天，速度×60×时长</span></label>
+      <span class="computed" id="m-daily-bags">--</span>
+    </div>
+
+    <div class="subgrid-title">应急包（5天款）· 包装人效</div>
+    <div class="row">
+      <label>本月生产量<span class="hint">盒</span></label>
+      <input type="number" id="p-std5-qty" value="1000" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>旧外包单价<span class="hint">元/盒</span></label>
+      <input type="number" id="p-std5-price" value="11.5" step="0.1" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>包装人效<span class="hint">盒/小时/人</span></label>
+      <input type="number" id="a-std5-rate" value="90" step="1" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>包装投入人数<span class="hint">人</span></label>
+      <input type="number" id="a-std5-people" value="2" step="0.5" oninput="calcAll()">
+    </div>
+
+    <div class="subgrid-title">人群包（30天款）· 包装人效</div>
+    <div class="row">
+      <label>本月生产量<span class="hint">盒</span></label>
+      <input type="number" id="p-std30-qty" value="0" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>旧外包单价<span class="hint">元/盒</span></label>
+      <input type="number" id="p-std30-price" value="25" step="0.1" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>包装人效<span class="hint">盒/小时/人</span></label>
+      <input type="number" id="a-std30-rate" value="35" step="0.5" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>包装投入人数<span class="hint">人</span></label>
+      <input type="number" id="a-std30-people" value="2" step="0.5" oninput="calcAll()">
+    </div>
+
+    <table class="compare" style="margin-top:16px;">
+      <tr>
+        <th>产品</th>
+        <th>本月生产量</th>
+        <th>机器日产能</th>
+        <th>人工日产能</th>
+        <th>瓶颈</th>
+        <th>预计交期</th>
+      </tr>
+      <tr>
+        <td>应急包(5天款)</td>
+        <td id="bn-std5-qty">--</td>
+        <td id="bn-std5-machine">--</td>
+        <td id="bn-std5-labor">--</td>
+        <td id="bn-std5-result">--</td>
+        <td id="bn-std5-eta">--</td>
+      </tr>
+      <tr>
+        <td>人群包(30天款)</td>
+        <td id="bn-std30-qty">--</td>
+        <td id="bn-std30-machine">--</td>
+        <td id="bn-std30-labor">--</td>
+        <td id="bn-std30-result">--</td>
+        <td id="bn-std30-eta">--</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.8;">
+      机器日产能 = 机器速度（袋/分）× 60 × 运行时长 ÷ 每盒袋数（应急包5 / 人群包30）<br>
+      人工日产能 = 人效（盒/时/人）× 投入人数 × 8<br>
+      瓶颈 = 机器 vs 人工取较慢者；预计交期 = 本月生产量 ÷ 瓶颈日产能
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>月度参数设置</h2>
+    <p class="section-hint">用于计算"现在自营 vs 以前外包"的月度成本对比</p>
+
+    <div class="row">
+      <label>房租<span class="hint">元/月</span></label>
+      <input type="number" id="p-rent-house" value="25000" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>电费<span class="hint">元/月</span></label>
+      <input type="number" id="p-rent-elec" value="1500" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>网费<span class="hint">元/月</span></label>
+      <input type="number" id="p-rent-net" value="375" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>水费<span class="hint">元/月</span></label>
+      <input type="number" id="p-rent-water" value="500" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>月人工费用<span class="hint">元/月，含定制+标品分装人工</span></label>
+      <input type="number" id="p-labor" value="40000" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>每周工作天数</label>
+      <input type="number" id="p-workdays" value="6" oninput="calcAll()">
+    </div>
+
+    <!-- ===== 定制订单（单 + 盒分开录入） ===== -->
+    <div class="subgrid-title">定制订单</div>
+    <div class="row">
+      <label>本月定制订单总量<span class="hint">单</span></label>
+      <input type="number" id="p-customtotal" value="2000" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>本月定制总盒数<span class="hint">盒，各单盒数不一，直接录总盒数</span></label>
+      <input type="number" id="p-customtotal-boxes-input" value="6505" oninput="calcAll()">
+    </div>
+    <div class="row" style="border-bottom:none;">
+      <label>平均每单盒数<span class="hint">总盒数 ÷ 订单量，仅作参考</span></label>
+      <span class="computed" id="p-avg-boxes-per-order">--</span>
+    </div>
+    <div class="row">
+      <label>旧外包定制单价<span class="hint">元/单，以前外包按单计价</span></label>
+      <input type="number" id="p-oldcustomprice" value="30" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>旧模式管理费<span class="hint">元/月，含场地杂项</span></label>
+      <input type="number" id="p-mgmtfee" value="30000" class="input-constant" oninput="calcAll()">
+    </div>
+
+    <!-- ===== 兼职人工（手工 / 自动） ===== -->
+    <div class="subgrid-title">兼职人工（控制线：单盒 ≤ 27元）</div>
+    <div class="pt-sub">
+      <div class="row">
+        <label>手工 · 月费用<span class="hint">元/月</span></label>
+        <input type="number" id="p-pt-manual-fee" value="0" class="small-input" oninput="calcAll()">
+      </div>
+      <div class="row">
+        <label>手工 · 月盒数<span class="hint">盒/月</span></label>
+        <input type="number" id="p-pt-manual-boxes" value="0" class="small-input" oninput="calcAll()">
+      </div>
+      <div class="row" style="border-bottom:none;">
+        <label>手工 · 每盒成本</label>
+        <span class="computed" id="p-pt-manual-perbox">--</span>
+      </div>
+    </div>
+    <div class="pt-sub">
+      <div class="row">
+        <label>自动 · 月费用<span class="hint">元/月</span></label>
+        <input type="number" id="p-pt-auto-fee" value="0" class="small-input" oninput="calcAll()">
+      </div>
+      <div class="row">
+        <label>自动 · 月盒数<span class="hint">盒/月</span></label>
+        <input type="number" id="p-pt-auto-boxes" value="0" class="small-input" oninput="calcAll()">
+      </div>
+      <div class="row" style="border-bottom:none;">
+        <label>自动 · 每盒成本</label>
+        <span class="computed" id="p-pt-auto-perbox">--</span>
+      </div>
+    </div>
+    <div class="pt-summary" id="pt-total-summary" style="display:none;">兼职合计：<span id="pt-total-fee">¥0</span></div>
+  </div>
+
+  <div class="card">
+    <h2>定制 vs 标品 · 成本分摊</h2>
+    <p class="section-hint">按人工包装实际占用人天比例，把固定成本+人工+兼职拆分给定制和标品各自承担（人天由上方人效自动算出，无需手动填）。表格中"占比"为四舍五入后的展示值，"分摊成本"由程序按精确比例计算，两者不必相互换算核对。</p>
+
+    <div class="row">
+      <label>正式员工总人数<span class="hint">人</span></label>
+      <input type="number" id="a-staffcount" value="3" class="input-constant" oninput="calcAll()">
+    </div>
+    <div class="row">
+      <label>月工作天数<span class="hint">天，按6天/周折算</span></label>
+      <input type="number" id="a-monthdays" value="26" class="input-constant" oninput="calcAll()">
+    </div>
+
+    <div class="alloc-bar" id="alloc-bar"></div>
+    <div class="alloc-legend">
+      <div class="legend-item"><span class="legend-dot std5"></span>标品·5天款 <span id="legend-std5-pct"></span></div>
+      <div class="legend-item"><span class="legend-dot std30"></span>标品·30天款 <span id="legend-std30-pct"></span></div>
+      <div class="legend-item"><span class="legend-dot custom"></span>定制 <span id="legend-custom-pct"></span></div>
+    </div>
+
+    <table class="compare" style="margin-top:16px;">
+      <tr>
+        <th>业务</th>
+        <th>占用人天</th>
+        <th>占比</th>
+        <th>分摊成本</th>
+        <th>单均成本</th>
+        <th>每盒成本</th>
+        <th>外包盒价</th>
+        <th>每盒节约</th>
+      </tr>
+      <tr>
+        <td>标品 · 5天款</td>
+        <td id="alloc-std5-days">--</td>
+        <td id="alloc-std5-pct">--</td>
+        <td id="alloc-std5-cost">--</td>
+        <td id="alloc-std5-perunit">--</td>
+        <td id="alloc-std5-perbox">--</td>
+        <td id="alloc-std5-oldprice">--</td>
+        <td id="alloc-std5-saving">--</td>
+      </tr>
+      <tr>
+        <td>标品 · 30天款</td>
+        <td id="alloc-std30-days">--</td>
+        <td id="alloc-std30-pct">--</td>
+        <td id="alloc-std30-cost">--</td>
+        <td id="alloc-std30-perunit">--</td>
+        <td id="alloc-std30-perbox">--</td>
+        <td id="alloc-std30-oldprice">--</td>
+        <td id="alloc-std30-saving">--</td>
+      </tr>
+      <tr class="total">
+        <td>定制</td>
+        <td id="alloc-custom-days">--</td>
+        <td id="alloc-custom-pct">--</td>
+        <td id="alloc-custom-cost">--</td>
+        <td id="alloc-custom-perunit">--</td>
+        <td id="alloc-custom-perbox">--</td>
+        <td id="alloc-custom-oldprice">--</td>
+        <td id="alloc-custom-saving">--</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.8;">
+      占用人天 = 包装投入人数 × 预计交期天数（消耗的人天，不是日历天）<br>
+      总人天池子（分母）= 正式员工人数 × 月工作天数<br>
+      占比 = 该业务占用人天 ÷ 总人天池子<br>
+      分摊成本 = 占比 ×（房租 + 电费 + 网费 + 水费 + 月人工费用 + 兼职合计）<br>
+      单均成本 = 分摊成本 ÷ 该业务单数；每盒成本 = 分摊成本 ÷ 该业务盒数<br>
+      标品 1单 = 1盒，因此单均 = 每盒；仅定制约单盒不等
+    </p>
+    <div id="alloc-example" style="background:#f5f0e8;border-left:3px solid #c9a96e;border-radius:4px;padding:10px 14px;margin:10px 0 0;font-size:11px;color:#666;line-height:2;">
+      <strong style="color:#333;">核算示例（应急包 · 5天款）</strong><br>
+      <span id="ex-line1"></span><br>
+      <span id="ex-line2"></span><br>
+      <span id="ex-line3"></span><br>
+      <span id="ex-line4"></span><br>
+      <span id="ex-line5"></span>
+    </div>
+
+    <div class="metrics" style="grid-template-columns: 1fr 1fr 1fr;">
+      <div class="metric">
+        <p class="metric-label">定制 · 现在每盒成本</p>
+        <p class="metric-value" id="alloc-custom-vs-old">--</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">定制 · 现在每单成本</p>
+        <p class="metric-value" id="alloc-custom-per-order-now">--</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">外包 · 每单价格（含管理费）</p>
+        <p class="metric-value" id="alloc-custom-old-price">--</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">定制 · 手工</p>
+        <p class="metric-value" style="color:#c0392b;">¥27/盒</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">兼职手工 · 每盒成本</p>
+        <p class="metric-value" id="alloc-ptmanual-cost">--</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>月度成本对比</h2>
+    <p class="section-hint">对比现在自营 vs 以前全外包的总成本、盒量、盒均成本（关键指标）</p>
+
+    <div class="chart-wrap">
+      <div class="chart-bars">
+        <div class="chart-col">
+          <div class="chart-bar old" id="chart-bar-old" style="height:0%;">
+            <span class="chart-bar-value" id="chart-bar-old-value"></span>
+          </div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar new" id="chart-bar-new" style="height:0%;">
+            <span class="chart-bar-value" id="chart-bar-new-value"></span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-labels">
+        <div class="chart-label">以前外包</div>
+        <div class="chart-label">现在自营</div>
+      </div>
+    </div>
+
+    <table class="compare">
+      <tr>
+        <th>方案</th>
+        <th>总成本</th>
+        <th>总单数</th>
+        <th>总盒数</th>
+        <th>每盒成本</th>
+      </tr>
+      <tr>
+        <td>以前外包</td>
+        <td id="old-total-cost">--</td>
+        <td id="old-units">--</td>
+        <td id="old-boxes">--</td>
+        <td id="old-per-box">--</td>
+      </tr>
+      <tr class="total">
+        <td>现在自营</td>
+        <td id="new-total-cost">--</td>
+        <td id="new-units">--</td>
+        <td id="new-boxes">--</td>
+        <td id="new-per-box">--</td>
+      </tr>
+    </table>
+    <p style="font-size:11px;color:#aaa;margin:10px 0 0;line-height:1.8;">
+      以前总成本 = 定制盒数 × 盒单价 + 标品盒数 × 盒单价 + 管理费<br>
+      现在总成本 = 房租 + 电费 + 网费 + 水费 + 月人工费用 + 兼职合计<br>
+      每盒成本 = 总成本 ÷ 总盒数；节约 = 以前 − 现在
+    </p>
+
+    <div class="metrics">
+      <div class="metric">
+        <p class="metric-label">每月节约金额</p>
+        <p class="metric-value" id="savings-amount">--</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">节约比例</p>
+        <p class="metric-value" id="savings-pct">--</p>
+      </div>
+      <div class="metric">
+        <p class="metric-label">每盒节约</p>
+        <p class="metric-value" id="savings-perbox">--</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function calcAll() {
+  const rentHouse = parseFloat(document.getElementById('p-rent-house').value) || 0;
+  const rentElec = parseFloat(document.getElementById('p-rent-elec').value) || 0;
+  const rentNet = parseFloat(document.getElementById('p-rent-net').value) || 0;
+  const rentWater = parseFloat(document.getElementById('p-rent-water').value) || 0;
+  const rent = rentHouse + rentElec + rentNet + rentWater;
+  const labor = parseFloat(document.getElementById('p-labor').value) || 0;
+
+  // ===== 兼职人工 =====
+  const ptManualFee = parseFloat(document.getElementById('p-pt-manual-fee').value) || 0;
+  const ptManualBoxes = parseFloat(document.getElementById('p-pt-manual-boxes').value) || 0;
+  const ptAutoFee = parseFloat(document.getElementById('p-pt-auto-fee').value) || 0;
+  const ptAutoBoxes = parseFloat(document.getElementById('p-pt-auto-boxes').value) || 0;
+  const totalParttime = ptManualFee + ptAutoFee;
+
+  // 兼职每盒成本（27元控制线）
+  const ptManualPerBox = ptManualBoxes > 0 ? ptManualFee / ptManualBoxes : 0;
+  const ptAutoPerBox = ptAutoBoxes > 0 ? ptAutoFee / ptAutoBoxes : 0;
+  const PT_LIMIT = 27;
+
+  document.getElementById('pt-total-fee').textContent = '¥' + Math.round(totalParttime).toLocaleString();
+  document.getElementById('pt-total-summary').style.display = totalParttime > 0 ? 'block' : 'none';
+
+  // 手工 · 每盒成本
+  const ptmEl = document.getElementById('p-pt-manual-perbox');
+  if (ptManualBoxes > 0) {
+    ptmEl.textContent = '¥' + ptManualPerBox.toFixed(2) + '/盒';
+    ptmEl.className = 'computed' + (ptManualPerBox > PT_LIMIT ? ' warn' : '');
+  } else {
+    ptmEl.textContent = '--';
+    ptmEl.className = 'computed';
+  }
+
+  // 自动 · 每盒成本
+  const ptaEl = document.getElementById('p-pt-auto-perbox');
+  if (ptAutoBoxes > 0) {
+    ptaEl.textContent = '¥' + ptAutoPerBox.toFixed(2) + '/盒';
+    ptaEl.className = 'computed' + (ptAutoPerBox > PT_LIMIT ? ' warn' : '');
+  } else {
+    ptaEl.textContent = '--';
+    ptaEl.className = 'computed';
+  }
+
+  // ===== 定制订单（单 + 盒分开录入） =====
+  const customTotal = parseFloat(document.getElementById('p-customtotal').value) || 0;
+  const customTotalBoxes = parseFloat(document.getElementById('p-customtotal-boxes-input').value) || 0;
+  const oldCustomPrice = parseFloat(document.getElementById('p-oldcustomprice').value) || 0;
+  const avgBoxesPerOrder = customTotal > 0 ? (customTotalBoxes / customTotal) : 0;
+
+  document.getElementById('p-avg-boxes-per-order').textContent = customTotal > 0 ? avgBoxesPerOrder.toFixed(2) + ' 盒/单' : '--';
+
+  const std5Qty = parseFloat(document.getElementById('p-std5-qty').value) || 0;
+  const std5Price = parseFloat(document.getElementById('p-std5-price').value) || 0;
+  const std30Qty = parseFloat(document.getElementById('p-std30-qty').value) || 0;
+  const std30Price = parseFloat(document.getElementById('p-std30-price').value) || 0;
+
+  const mgmtFee = parseFloat(document.getElementById('p-mgmtfee').value) || 0;
+
+  // ===== 标品机产能（机器侧瓶颈） =====
+  const machineSpeed = parseFloat(document.getElementById('m-speed').value) || 0;
+  const machineHours = parseFloat(document.getElementById('m-hours').value) || 0;
+  const machineDailyBags = machineSpeed * 60 * machineHours;
+
+  const std5BagsPerBox = 5;
+  const std30BagsPerBox = 30;
+
+  const std5MachineDailyCap = std5BagsPerBox > 0 ? (machineDailyBags / std5BagsPerBox) : 0;
+  const std30MachineDailyCap = std30BagsPerBox > 0 ? (machineDailyBags / std30BagsPerBox) : 0;
+
+  document.getElementById('m-daily-bags').textContent = Math.round(machineDailyBags).toLocaleString() + ' 袋/天';
+
+  // ===== 包装人效 =====
+  const std5Rate = parseFloat(document.getElementById('a-std5-rate').value) || 0;
+  const std5People = parseFloat(document.getElementById('a-std5-people').value) || 0;
+  const std30Rate = parseFloat(document.getElementById('a-std30-rate').value) || 0;
+  const std30People = parseFloat(document.getElementById('a-std30-people').value) || 0;
+
+  const std5LaborDailyCap = std5Rate * std5People * 8;
+  const std30LaborDailyCap = std30Rate * std30People * 8;
+
+  const std5Bottleneck = std5MachineDailyCap <= std5LaborDailyCap ? '机器' : '人工';
+  const std30Bottleneck = std30MachineDailyCap <= std30LaborDailyCap ? '机器' : '人工';
+  const std5EffectiveDailyCap = Math.min(std5MachineDailyCap, std5LaborDailyCap);
+  const std30EffectiveDailyCap = Math.min(std30MachineDailyCap, std30LaborDailyCap);
+
+  const std5EtaDays = std5EffectiveDailyCap > 0 ? (std5Qty / std5EffectiveDailyCap) : 0;
+  const std30EtaDays = std30EffectiveDailyCap > 0 ? (std30Qty / std30EffectiveDailyCap) : 0;
+
+  document.getElementById('bn-std5-qty').textContent = Math.round(std5Qty).toLocaleString() + '盒';
+  document.getElementById('bn-std5-machine').textContent = Math.round(std5MachineDailyCap).toLocaleString() + '盒';
+  document.getElementById('bn-std5-labor').textContent = Math.round(std5LaborDailyCap).toLocaleString() + '盒';
+  document.getElementById('bn-std5-result').textContent = std5Bottleneck;
+  document.getElementById('bn-std5-eta').textContent = std5EtaDays.toFixed(1) + '天';
+
+  document.getElementById('bn-std30-qty').textContent = Math.round(std30Qty).toLocaleString() + '盒';
+  document.getElementById('bn-std30-machine').textContent = Math.round(std30MachineDailyCap).toLocaleString() + '盒';
+  document.getElementById('bn-std30-labor').textContent = Math.round(std30LaborDailyCap).toLocaleString() + '盒';
+  document.getElementById('bn-std30-result').textContent = std30Bottleneck;
+  document.getElementById('bn-std30-eta').textContent = std30EtaDays.toFixed(1) + '天';
+
+  const std5PersonDays = std5People * std5EtaDays;
+  const std30PersonDays = std30People * std30EtaDays;
+
+  // ===== 月度成本对比（盒级 + 单级） =====
+  // 旧外包定制按"单"计价：定制费用 = 订单量 × 单价
+  const oldCustomCost = customTotal * oldCustomPrice;
+  const oldStd5Cost = std5Qty * std5Price;
+  const oldStd30Cost = std30Qty * std30Price;
+  const oldTotalCost = oldCustomCost + oldStd5Cost + oldStd30Cost + mgmtFee;
+
+  const oldTotalUnits = customTotal + std5Qty + std30Qty; // 单数
+  const oldTotalBoxes = customTotalBoxes + std5Qty + std30Qty; // 盒数
+  const oldPerBox = oldTotalBoxes > 0 ? (oldTotalCost / oldTotalBoxes) : 0;
+
+  const newTotalCost = rent + labor + totalParttime;
+  const newTotalUnits = customTotal + std5Qty + std30Qty;
+  const newTotalBoxes = customTotalBoxes + std5Qty + std30Qty;
+  const newPerBox = newTotalBoxes > 0 ? (newTotalCost / newTotalBoxes) : 0;
+
+  document.getElementById('old-total-cost').textContent = '¥' + Math.round(oldTotalCost).toLocaleString();
+  document.getElementById('old-units').textContent = oldTotalUnits.toLocaleString() + '单';
+  document.getElementById('old-boxes').textContent = oldTotalBoxes.toLocaleString() + '盒';
+  document.getElementById('old-per-box').textContent = '¥' + oldPerBox.toFixed(2);
+
+  document.getElementById('new-total-cost').textContent = '¥' + Math.round(newTotalCost).toLocaleString();
+  document.getElementById('new-units').textContent = newTotalUnits.toLocaleString() + '单';
+  document.getElementById('new-boxes').textContent = newTotalBoxes.toLocaleString() + '盒';
+  document.getElementById('new-per-box').textContent = '¥' + newPerBox.toFixed(2);
+
+  const savings = oldTotalCost - newTotalCost;
+  const savingsPct = oldTotalCost > 0 ? (savings / oldTotalCost * 100) : 0;
+  const savingsPerBox = oldPerBox - newPerBox;
+
+  document.getElementById('savings-amount').textContent = '¥' + Math.round(savings).toLocaleString();
+  document.getElementById('savings-pct').textContent = savingsPct.toFixed(1) + '%';
+  document.getElementById('savings-perbox').textContent = '¥' + savingsPerBox.toFixed(2);
+
+  // 柱状图
+  const maxCost = Math.max(oldTotalCost, newTotalCost, 1);
+  const oldBarPct = (oldTotalCost / maxCost) * 100;
+  const newBarPct = (newTotalCost / maxCost) * 100;
+  document.getElementById('chart-bar-old').style.height = oldBarPct + '%';
+  document.getElementById('chart-bar-new').style.height = newBarPct + '%';
+  document.getElementById('chart-bar-old-value').textContent = '¥' + Math.round(oldTotalCost).toLocaleString();
+  document.getElementById('chart-bar-new-value').textContent = '¥' + Math.round(newTotalCost).toLocaleString();
+
+  // ===== 定制 vs 标品 · 人天分摊 =====
+  const staffCount = parseFloat(document.getElementById('a-staffcount').value) || 0;
+  const monthDays = parseFloat(document.getElementById('a-monthdays').value) || 0;
+
+  const totalPersonDays = staffCount * monthDays;
+  const customPersonDays = Math.max(0, totalPersonDays - std5PersonDays - std30PersonDays);
+
+  const std5Pct = totalPersonDays > 0 ? (std5PersonDays / totalPersonDays) : 0;
+  const std30Pct = totalPersonDays > 0 ? (std30PersonDays / totalPersonDays) : 0;
+  const customPct = totalPersonDays > 0 ? (customPersonDays / totalPersonDays) : 0;
+
+  const totalNewCost = rent + labor + totalParttime;
+  const std5AllocCost = totalNewCost * std5Pct;
+  const std30AllocCost = totalNewCost * std30Pct;
+  const customAllocCost = totalNewCost * customPct;
+
+  // 单均成本
+  const std5PerUnitNew = std5Qty > 0 ? (std5AllocCost / std5Qty) : 0;
+  const std30PerUnitNew = std30Qty > 0 ? (std30AllocCost / std30Qty) : 0;
+  const customPerUnitNew = customTotal > 0 ? (customAllocCost / customTotal) : 0;
+
+  // 每盒成本（标品 1单=1盒，定制另算）
+  const std5PerBoxNew = std5PerUnitNew; // 标品 1单=1盒
+  const std30PerBoxNew = std30PerUnitNew; // 标品 1单=1盒
+  const customPerBoxNew = customTotalBoxes > 0 ? (customAllocCost / customTotalBoxes) : 0;
+
+  // --- 标品 5天款 ---
+  document.getElementById('alloc-std5-days').textContent = std5PersonDays.toFixed(2);
+  document.getElementById('alloc-std5-pct').textContent = (std5Pct * 100).toFixed(1) + '%';
+  document.getElementById('alloc-std5-cost').textContent = '¥' + Math.round(std5AllocCost).toLocaleString();
+  document.getElementById('alloc-std5-perunit').textContent = std5Qty > 0 ? '¥' + std5PerUnitNew.toFixed(2) : '-';
+  document.getElementById('alloc-std5-perbox').textContent = std5Qty > 0 ? '¥' + std5PerBoxNew.toFixed(2) : '-';
+  document.getElementById('alloc-std5-oldprice').textContent = '¥' + std5Price.toFixed(2);
+  const std5SaveEl = document.getElementById('alloc-std5-saving');
+  if (std5Qty > 0) {
+    const std5Saving = std5Price - std5PerBoxNew;
+    std5SaveEl.textContent = (std5Saving >= 0 ? '省 ¥' : '亏 ¥') + Math.abs(std5Saving).toFixed(2);
+    std5SaveEl.style.color = std5Saving >= 0 ? '#2a6638' : '#962d22';
+  } else {
+    std5SaveEl.textContent = '-';
+    std5SaveEl.style.color = '#bbb';
+  }
+
+  // --- 标品 30天款 ---
+  document.getElementById('alloc-std30-days').textContent = std30PersonDays.toFixed(2);
+  document.getElementById('alloc-std30-pct').textContent = (std30Pct * 100).toFixed(1) + '%';
+  document.getElementById('alloc-std30-cost').textContent = '¥' + Math.round(std30AllocCost).toLocaleString();
+  document.getElementById('alloc-std30-perunit').textContent = std30Qty > 0 ? '¥' + std30PerUnitNew.toFixed(2) : '-';
+  document.getElementById('alloc-std30-perbox').textContent = std30Qty > 0 ? '¥' + std30PerBoxNew.toFixed(2) : '-';
+  document.getElementById('alloc-std30-oldprice').textContent = '¥' + std30Price.toFixed(2);
+  const std30SaveEl = document.getElementById('alloc-std30-saving');
+  if (std30Qty > 0) {
+    const std30Saving = std30Price - std30PerBoxNew;
+    std30SaveEl.textContent = (std30Saving >= 0 ? '省 ¥' : '亏 ¥') + Math.abs(std30Saving).toFixed(2);
+    std30SaveEl.style.color = std30Saving >= 0 ? '#2a6638' : '#962d22';
+  } else {
+    std30SaveEl.textContent = '-';
+    std30SaveEl.style.color = '#bbb';
+  }
+
+  // --- 定制 ---
+  document.getElementById('alloc-custom-days').textContent = customPersonDays.toFixed(1);
+  document.getElementById('alloc-custom-pct').textContent = (customPct * 100).toFixed(1) + '%';
+  document.getElementById('alloc-custom-cost').textContent = '¥' + Math.round(customAllocCost).toLocaleString();
+  document.getElementById('alloc-custom-perunit').textContent = customTotal > 0 ? '¥' + customPerUnitNew.toFixed(2) : '-';
+  document.getElementById('alloc-custom-perbox').textContent = customTotalBoxes > 0 ? '¥' + customPerBoxNew.toFixed(2) : '-';
+
+  const oldCustomPerBoxWithMgmt = customTotalBoxes > 0 ? ((oldCustomCost + mgmtFee) / customTotalBoxes) : 0;
+  document.getElementById('alloc-custom-oldprice').textContent = customTotalBoxes > 0 ? '¥' + oldCustomPerBoxWithMgmt.toFixed(2) : '-';
+  const customSaveEl = document.getElementById('alloc-custom-saving');
+  if (customTotalBoxes > 0) {
+    const customSaving = oldCustomPerBoxWithMgmt - customPerBoxNew;
+    customSaveEl.textContent = (customSaving >= 0 ? '省 ¥' : '亏 ¥') + Math.abs(customSaving).toFixed(2);
+    customSaveEl.style.color = customSaving >= 0 ? '#2a6638' : '#962d22';
+  } else {
+    customSaveEl.textContent = '-';
+    customSaveEl.style.color = '#bbb';
+  }
+
+  document.getElementById('alloc-custom-vs-old').textContent = customTotalBoxes > 0 ? '¥' + customPerBoxNew.toFixed(2) : '-';
+  document.getElementById('alloc-custom-per-order-now').textContent = customTotal > 0 ? '¥' + customPerUnitNew.toFixed(2) : '-';
+
+  // 兼职手工 · 每盒成本
+  const ptmCostEl = document.getElementById('alloc-ptmanual-cost');
+  if (ptManualBoxes > 0) {
+    ptmCostEl.textContent = '¥' + ptManualPerBox.toFixed(2) + '/盒';
+    ptmCostEl.style.color = ptManualPerBox > PT_LIMIT ? '#c0392b' : '#2a6638';
+  } else {
+    ptmCostEl.textContent = '--';
+    ptmCostEl.style.color = '#999';
+  }
+
+  // 以前外包每单等价（含管理费）= （定制外包费 + 管理费）÷ 订单量
+  const oldCustomPerOrderWithMgmt = customTotal > 0 ? ((oldCustomCost + mgmtFee) / customTotal) : 0;
+  document.getElementById('alloc-custom-old-price').textContent = customTotal > 0 ? '¥' + oldCustomPerOrderWithMgmt.toFixed(2) : '-';
+
+  // ===== 核算示例 =====
+  document.getElementById('ex-line1').innerHTML = '① 占用人天 = ' + std5People + '人 × ' + std5EtaDays.toFixed(1) + '天 = <b>' + std5PersonDays.toFixed(2) + ' 人天</b>';
+  document.getElementById('ex-line2').innerHTML = '② 总人天池子 = ' + staffCount + '人 × ' + monthDays + '天 = <b>' + totalPersonDays + ' 人天</b>';
+  document.getElementById('ex-line3').innerHTML = '③ 占比 = ' + std5PersonDays.toFixed(2) + ' ÷ ' + totalPersonDays + ' ≈ <b>' + (std5Pct * 100).toFixed(1) + '%</b>';
+  document.getElementById('ex-line4').innerHTML = '④ 分摊成本 = ' + (std5Pct * 100).toFixed(1) + '% ×（' + rentHouse.toLocaleString() + '房租 + ' + rentElec.toLocaleString() + '电费 + ' + rentNet.toLocaleString() + '网费 + ' + rentWater.toLocaleString() + '水费 + ' + labor.toLocaleString() + '人工 + ' + Math.round(totalParttime).toLocaleString() + '兼职）≈ <b>¥' + Math.round(std5AllocCost).toLocaleString() + '</b>';
+  document.getElementById('ex-line5').innerHTML = '⑤ 每盒成本 = ¥' + Math.round(std5AllocCost).toLocaleString() + ' ÷ ' + Math.round(std5Qty).toLocaleString() + '盒 = <b>¥' + std5PerBoxNew.toFixed(2) + '/盒</b>';
+
+  // 分摊堆叠条
+  const allocBar = document.getElementById('alloc-bar');
+  allocBar.innerHTML =
+    '<div class="alloc-seg std5" style="width:' + (std5Pct * 100) + '%">' + (std5Pct * 100 >= 6 ? (std5Pct * 100).toFixed(1) + '%' : '') + '</div>' +
+    '<div class="alloc-seg std30" style="width:' + (std30Pct * 100) + '%">' + (std30Pct * 100 >= 6 ? (std30Pct * 100).toFixed(1) + '%' : '') + '</div>' +
+    '<div class="alloc-seg custom" style="width:' + (customPct * 100) + '%">' + (customPct * 100).toFixed(1) + '%</div>';
+  document.getElementById('legend-std5-pct').textContent = (std5Pct * 100).toFixed(1) + '%';
+  document.getElementById('legend-std30-pct').textContent = (std30Pct * 100).toFixed(1) + '%';
+  document.getElementById('legend-custom-pct').textContent = (customPct * 100).toFixed(1) + '%';
+}
+
+calcAll();
+</script>
+</body>
+</html>
