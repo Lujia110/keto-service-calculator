@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="dNzqTdUb2SLUnaoTZqbwqp">
+<head data-page-node-id="ql2ycgoSFlwQB6oy0mb6cE">
+<meta charset="UTF-8" data-page-node-id="4due4XGhCAE09tuiGu1Juq">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="Ogf8HUO1UtyFcWxYp1J9H3">
+<title>小红书 B 端获客内容方案 · 汇报版</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #ffffff; color: #1c1c1c;
+    font-family: "PingFang SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px; line-height: 1.75; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 56px 40px 100px; }
+
+  /* 封面 */
+  .cover { border-bottom: 1px solid #e5e7e5; padding-bottom: 32px; margin-bottom: 40px; }
+  .cover .kicker { font-size: 12.5px; color: #6b6b6b; letter-spacing: .08em; margin: 0 0 12px; }
+  .cover h1 { font-size: 30px; font-weight: 500; margin: 0 0 16px; letter-spacing: -.015em; line-height: 1.4; }
+  .cover .meta { font-size: 13px; color: #8a8a8a; margin: 0; }
+
+  /* 结论先行 */
+  .headline {
+    border: 1px solid #dfe6e2; background: #f7faf8; border-radius: 14px;
+    padding: 26px 28px; margin-bottom: 48px;
+  }
+  .headline h2 { font-size: 13px; font-weight: 500; color: #14483a; margin: 0 0 14px; letter-spacing: .04em; }
+  .headline .one { font-size: 16.5px; line-height: 1.7; margin: 0 0 20px; color: #16241f; }
+  .headline .one b { font-weight: 500; color: #14483a; }
+  .headline ol { margin: 0; padding-left: 0; list-style: none; counter-reset: h; }
+  .headline li {
+    counter-increment: h; position: relative; padding-left: 32px; margin-bottom: 12px; font-size: 13.5px;
+  }
+  .headline li:last-child { margin-bottom: 0; }
+  .headline li::before {
+    content: counter(h); position: absolute; left: 0; top: 3px;
+    width: 20px; height: 20px; border-radius: 50%; background: #14483a; color: #fff;
+    font-size: 11.5px; display: flex; align-items: center; justify-content: center; font-weight: 500;
+  }
+  .headline li b { font-weight: 500; }
+
+  /* 章节 */
+  section { margin-bottom: 58px; }
+  h2.sec { font-size: 20px; font-weight: 500; margin: 0 0 6px; letter-spacing: -.01em; }
+  h2.sec .n { font-size: 13px; color: #14483a; margin-right: 10px; }
+  .sub { font-size: 13px; color: #6b6b6b; margin: 0 0 22px; }
+  h3.sub2 { font-size: 15px; font-weight: 500; margin: 34px 0 12px; }
+
+  /* 表格 */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left; font-weight: 500; font-size: 12.5px; color: #5f5f5f;
+    padding: 11px 13px; background: #f5f7f5; border-bottom: 1px solid #dfe3e0; white-space: nowrap;
+  }
+  td { padding: 12px 13px; border-bottom: 1px solid #eef0ee; vertical-align: top; line-height: 1.65; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfa; }
+  .tbl { border: 1px solid #e5e7e5; border-radius: 10px; overflow-x: auto; }
+  .tbl table { min-width: 720px; }
+  td.date { white-space: nowrap; font-weight: 500; color: #14483a; }
+
+  /* 标签 */
+  .tag { display: inline-block; font-size: 11.5px; padding: 2px 9px; border-radius: 20px; background: #eef3f0; color: #14483a; white-space: nowrap; }
+  .tag.s { background: #14483a; color: #fff; }
+  .tag.a { background: #dfe6e2; color: #14483a; }
+  .tag.b { background: #f2f4f1; color: #4d6b5e; }
+  .tag.c { background: #f4f4f2; color: #85857d; }
+  code { font-family: "SF Mono", ui-monospace, Menlo, monospace; font-size: 12.5px; background: #eef3f0; color: #14483a; padding: 2px 7px; border-radius: 4px; }
+
+  /* 卡片 */
+  .card { border: 1px solid #e5e7e5; border-radius: 12px; padding: 22px 24px; background: #fff; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+  .card h3 { font-size: 15px; font-weight: 500; margin: 0 0 8px; }
+  .card p { margin: 0; font-size: 13px; color: #5a5a5a; }
+
+  .callout { border-left: 2px solid #14483a; background: #f6f9f7; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 13.5px; }
+  .callout b { font-weight: 500; color: #14483a; }
+  .quote { border: 1px solid #dfe6e2; background: #f7faf8; border-radius: 12px; padding: 22px 24px; font-size: 15px; line-height: 1.75; color: #16241f; }
+  .quote b { color: #14483a; font-weight: 500; }
+
+  /* 执行卡 */
+  .post { border: 1px solid #e5e7e5; border-radius: 12px; margin-bottom: 18px; overflow: hidden; }
+  .post-head { display: flex; align-items: baseline; gap: 12px; padding: 16px 22px 14px; background: #f7faf8; border-bottom: 1px solid #e9edeb; flex-wrap: wrap; }
+  .post-head .idx { font-size: 12.5px; color: #14483a; font-weight: 500; }
+  .post-head .day { font-size: 12.5px; color: #6b6b6b; }
+  .post-head .ttl { font-size: 15px; font-weight: 500; flex: 1 1 100%; margin: 0; }
+  .post-body { padding: 18px 22px 20px; }
+  .field { display: grid; grid-template-columns: 92px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid #f2f4f2; font-size: 13.5px; }
+  .field:last-child { border-bottom: none; }
+  .field .k { font-size: 12.5px; color: #8a8a8a; padding-top: 1px; }
+  .field .v { line-height: 1.7; }
+  .field .v ol, .field .v ul { margin: 0; padding-left: 17px; }
+  .field .v li { margin-bottom: 3px; }
+  .field .v.hook { color: #16241f; }
+  .field .v.hook::before { content: "“"; color: #14483a; }
+  .field .v.hook::after { content: "”"; color: #14483a; }
+  .field .v.cta { color: #14483a; }
+
+  .step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #eef0ee; }
+  .step:last-child { border-bottom: none; }
+  .step .i { flex: 0 0 24px; height: 24px; border-radius: 50%; background: #14483a; color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+  .step .b { font-size: 13.5px; }
+  .step .b b { font-weight: 500; }
+  .step .b span { color: #6b6b6b; }
+  .step .b .no { color: #b04a3a; }
+  .step .b .yes { color: #14483a; }
+
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; margin: 6px 0 0; }
+  .flow span { background: #f5f7f5; border: 1px solid #e5e7e5; border-radius: 20px; padding: 5px 13px; }
+  .flow .arw { border: none; background: none; color: #b4b2a9; padding: 0 1px; }
+
+  footer { border-top: 1px solid #e5e7e5; padding-top: 22px; font-size: 12.5px; color: #8a8a8a; }
+</style>
+</head>
+<body data-page-node-id="5yH5jo2rC9JJpOZXqhwLyg">
+<div class="wrap" data-page-node-id="3PFIifQvD3LLghrbjzAZRO">
+
+<div class="cover" data-page-node-id="IpJT3feUAZYqUcIC6UmGVO">
+  <p class="kicker" data-page-node-id="xxUD76jbINMtF0Luam7lj0">小红书 B 端获客内容方案 · 汇报版</p>
+  <h1 data-page-node-id="XHfTfHaMqjIoFOvkXCWO8v">把小红书从流量平台，变成营养产品供应链的 B 端获客入口</h1>
+  <p class="meta" data-page-node-id="WvgmFWtNwcNXhFQ5ApTOzD">单账号 · 一个定位 · 9/15–9/30 共 10 篇 · 2026 年 9 月</p>
+</div>
+
+<div class="headline" data-page-node-id="Gf5Nh3eauVqePM2pcbQFKs">
+  <h2 data-page-node-id="AfYivgfmS6VywGFFNFbf7Y">结论先行</h2>
+  <p class="one" data-page-node-id="uPRLYnh4EQh5Xm3xMQhPUO">不做成单纯的「香港 OEM 工厂号」，而是围绕 B 端客户 <b data-page-node-id="BjLBOIKwB78nerZpJteqDr">从「想做营养品」到「找供应商、降低 MOQ、找现货、做定制营养包、解决仓储履约」的真实搜索路径</b>，持续覆盖高意向关键词。</p>
+  <ol data-page-node-id="dVa74QE8LPED7GoeGDsdId">
+    <li data-page-node-id="xlDQVcAiIsy07oObzjBTEf"><b data-page-node-id="tswll4GlPTTbGuMtOjZ50g">只做一个账号，只做一个定位：</b>定制营养产品供应链。不按周分栏目，而是连续覆盖客户在不同决策阶段会搜的问题。</li>
+    <li data-page-node-id="7jd5LUYoSjQI1PrYAgFq7B"><b data-page-node-id="u6s0mkR6aJ7gF8bHEDnUzr">10 篇内容，一条主线打穿：</b>定制营养包 → 小批量 → 代工/避坑 → 香港代工 → 身份客户（营养师/私域）→ 营养包 OEM → 完整供应链。</li>
+    <li data-page-node-id="NOek2ExZstOa6jfQe5OcmA"><b data-page-node-id="wGM4CExiTFr7M5q0iMDKEF">内容不卖「我们有什么」，只回答「客户在纠结什么」。</b>业务能力只作为证据出现，不作为内容主体。</li>
+    <li data-page-node-id="3VNHf07hOHT92CsV48jF0O"><b data-page-node-id="85QHVwK8t0fONcTYuVFn0D">KPI 不看阅读量，看三层：</b>搜索覆盖 → 精准互动（私信/评论咨询）→ 有效 B 端线索。</li>
+  </ol>
+</div>
+
+<section data-page-node-id="xEIHUTbFv2h2KX6We4iQth">
+  <h2 class="sec" data-page-node-id="pzBtAGa8luQU9Cu60amRx6"><span class="n" data-page-node-id="q0kB2mqDVLwA4otfVlUCCG">01</span>项目目标</h2>
+  <p class="sub" data-page-node-id="H2zQ90h9OWAnUcVRu0cF82">我们要通过小红书搜索，持续获取正在寻找以下能力的 B 端客户。</p>
+  <div class="flow" data-page-node-id="5ffKE4kgDzGqd1oezuEmbJ">
+    <span data-page-node-id="yFeVDCzEqP39cgXVzul8LQ">营养品 / 保健品供应链</span><span class="arw" data-page-node-id="X7hM7p9mh89G0XE15SxFiR">·</span>
+    <span data-page-node-id="jiFCZbrRJMtkKOU5GHk9Vh">OEM / 贴牌</span><span class="arw" data-page-node-id="LTXwsdHD1IG0b4lOdHoZIk">·</span>
+    <span data-page-node-id="4FNEwb6oAGc4dV2aqpNOCo">小批量产品</span><span class="arw" data-page-node-id="9iNbdrVLB3HlpC59qdxdhQ">·</span>
+    <span data-page-node-id="ACTkFUkDuvhz4urF8j9lT3">现货产品 / 粒子</span><span class="arw" data-page-node-id="rrzgZxUKyQUEzBERU8vfYP">·</span>
+    <span data-page-node-id="4iGpmFysFOwTmadCW2NdBz">定制营养包</span><span class="arw" data-page-node-id="YZrYoOx5Kghx1TcxXAqk78">·</span>
+    <span data-page-node-id="VJwyx3jRZBUiDLa1L9kQNG">分装 / 包装</span><span class="arw" data-page-node-id="ITLh4ykrk8HKkWK5qTmHFn">·</span>
+    <span data-page-node-id="awqJhchGA2fSWDfMw8JZXp">仓储 / 履约 / 跨境</span>
+  </div>
+  <div class="callout" style="margin-top:22px" data-page-node-id="76dsESzYh85VEz7Vrt574Z">
+    <b data-page-node-id="moadquMDP5NV5SfT3nMy3V">最终不是让客户记住「我们是一家香港 OEM 工厂」，而是形成一个更高价值的认知：</b><br data-page-node-id="xszFjkvIMUHMEr9JijMk0C">
+    「如果我想做自己的定制营养产品 / 营养包，但又不想自己搭建整套供应链，可以找他们。」
+  </div>
+</section>
+
+<section data-page-node-id="6uSFTxdhmUJJFOHU3oVPIB">
+  <h2 class="sec" data-page-node-id="6Ss4bpjWYAveDZVYgvP3EC"><span class="n" data-page-node-id="ZIZbYBXbtmgOSnJFNq82Kd">02</span>我们到底在小红书上卖什么</h2>
+  <p class="sub" data-page-node-id="jRY8EwLG23XHJDAwJivAP8">不是单纯卖「代工」，卖的是一整条能落地的供应链。</p>
+  <div class="callout" data-page-node-id="CZu31uIvKQak6nM9BksNyk">
+    客户可能只缺其中一环，也可能需要完整方案。账号要让客户逐渐认识到——以下每一环我们都能承接。
+  </div>
+  <div class="flow" style="margin-top:20px" data-page-node-id="uKYj8m7dgcFQFor2lCLgqs">
+    <span data-page-node-id="fd90bjRXXTproULCLbTriz">产品供应</span><span class="arw" data-page-node-id="B2ZjqfvUpM3bu36FXjysH0">→</span>
+    <span data-page-node-id="04QxSx1tN5lsDNgKNUoK81">小批量</span><span class="arw" data-page-node-id="kEk311Tq7LwSlb9VEnZFxY">→</span>
+    <span data-page-node-id="CbUZiqXIujLqcY24C8GpVh">定制包装</span><span class="arw" data-page-node-id="TJYrU92kK3MXA8Bfp0yp7A">→</span>
+    <span data-page-node-id="mIEoigvlZwl9tFr2uIZcaL">营养包</span><span class="arw" data-page-node-id="XH9ehJWdED0Y4aUtbmBHZy">→</span>
+    <span data-page-node-id="eX2kmGVTc2zjFnd8UyAq80">仓储履约</span><span class="arw" data-page-node-id="HOEb6YofkuFrFKJpqG5G8V">→</span>
+    <span data-page-node-id="VTDKGNGkKLrG18BoazHKPS">香港 / 跨境</span>
+  </div>
+</section>
+
+<section data-page-node-id="5pl3kpOJvhFUV5Y6DNtljC">
+  <h2 class="sec" data-page-node-id="N9i5AIfZCa1HksQFDxOYIF"><span class="n" data-page-node-id="Ez4yOukPsRR4Y1OlO6eJ45">03</span>内容原则（最重要的一条）</h2>
+  <p class="sub" data-page-node-id="dc1Z8o2AVpNlALd06OMNTf">这是这个账号能不能做起来的分水岭。</p>
+  <div class="grid2" data-page-node-id="Fwutm5UCV5X2iAmIu31c80">
+    <div class="card" data-page-node-id="HGUCJm2gAqfZXwXN6AmTXP">
+      <h3 style="color:#8a8a8a" data-page-node-id="iKDIPBeN1yJtCwogc8dG6O">不要大量做</h3>
+      <p data-page-node-id="k6MEWl43CuTbEBGzfvxmk4">我们有 XX 个 SKU / 我们有工厂 / 我们支持 OEM / 我们有仓库 / 我们有某资质 / 我们支持一件代发<br data-page-node-id="2RcacPQFrzz3bNUMpS2aLZ"><br data-page-node-id="P3hYN8J2dkEHlqlO2VgI0R">
+      <span style="color:#8a8a8a" data-page-node-id="H0dK49FcjpAlMWPFBV1Ume">—— 这些可以出现，但只能作为<b style="font-weight:500" data-page-node-id="WM1esbaE05ba0SqbdHCztH">证据</b>，不能当内容主体。</span></p>
+    </div>
+    <div class="card" style="border-color:#c3d3ca" data-page-node-id="Zey4kRkb9KHZpXmgUM9Gt1">
+      <h3 style="color:#14483a" data-page-node-id="gJYENMjXfceBqJa7lCWI8r">真正应该做的内容公式</h3>
+      <p data-page-node-id="iz01t657XsHS9jgHRPO8yY"><b style="font-weight:500" data-page-node-id="OlWGF7mSW1l32ADS5K3pcC">客户问题 → 为什么会这样 → 传统方式有什么问题 → 有没有更合适的解法 → 我们怎么解决 → 哪类客户适合</b></p>
+    </div>
+  </div>
+
+  <h3 class="sub2" data-page-node-id="IDFUDEOPbgMXAggCxEJzys">示例：客户问「做自己的营养品，为什么 OEM 动不动就几万起订？」</h3>
+  <div class="flow" data-page-node-id="qiuMGdZMTEPkxr7pJwATdn">
+    <span data-page-node-id="2KvpznAf9ia7JNrc6EQUr5">传统 OEM 为什么 MOQ 高</span><span class="arw" data-page-node-id="HzM72R0eS7WYWzanEa7s42">→</span>
+    <span data-page-node-id="Lb2te0GiIrxUAHgpP9ngbT">小批量为什么难</span><span class="arw" data-page-node-id="qxlU07Bwol6oH9WVvMNiiM">→</span>
+    <span data-page-node-id="mYIRCgaUK5QVuYHjU8LEfe">现货 / 粒子 / 分装如何降低试错成本</span><span class="arw" data-page-node-id="gDLA48ISls3E8nySAPc388">→</span>
+    <span data-page-node-id="VuqwTg8iCqTGk1FjNSoeEW">什么样的客户适合这种模式</span>
+  </div>
+  <div class="callout" style="margin-top:18px" data-page-node-id="VvPP0gmAx6l6p8iaN5qDbO">
+    内容主线一律从 <b data-page-node-id="y0NVhA0FdSumlch05FmcSS">「客户为什么需要」</b> 出发，而不是从 <b data-page-node-id="cmvbCUtFug2LEMt6g2jFfv">「我们有什么」</b> 出发。
+  </div>
+</section>
+
+<section data-page-node-id="QhVJXrv9mLJJthLqPIEqTh">
+  <h2 class="sec" data-page-node-id="uEtY5803AREDE1gslA1PZO"><span class="n" data-page-node-id="h9GaRyUjgwKV86JrIMw7DE">04</span>关键词战略</h2>
+  <p class="sub" data-page-node-id="90hZ6iNYNiXApokZoaeoWN">这是本次方案最核心的部分。四级分层，各司其职。</p>
+
+  <h3 class="sub2" data-page-node-id="KADNYb0elzC7bmLI0aG39U">S 级 · 必须持续打（账号的核心搜索资产）</h3>
+  <div class="tbl" data-page-node-id="Wh709DlPrsdX8Chpwf7Xk1">
+    <table data-page-node-id="TkEhv9pqIfPb4DB46VDAmX">
+      <thead data-page-node-id="ynUDPMMAHqMzN7GoB5pD5e"><tr data-page-node-id="k62GVN68qKzEQ9DWWadxAb"><th style="width:28%" data-page-node-id="qGntnGKzorJTkKy2tfwp84">关键词</th><th data-page-node-id="M7ogowu8QaCNA8TG7Q0iHr">作用</th></tr></thead>
+      <tbody data-page-node-id="2HeMK5qFBlNirbbFqWLKVC">
+        <tr data-page-node-id="qZlEfNIJtj5fYp1ym9J245"><td data-page-node-id="lxFRgVAAye86FJnVeLDiBb"><span class="tag s" data-page-node-id="ONx7KEZNY6ryvmZ9AU6Asc">定制营养包</span></td><td data-page-node-id="KLlQoHRXpM31Bk6VgFXxLv">最核心品类，占位</td></tr>
+        <tr data-page-node-id="Hjc7h4EKGUNZxHoSLACNaW"><td data-page-node-id="2QUNjLjVpzOVAHKCX4WK3t"><span class="tag s" data-page-node-id="zJltZC3JT3BV8snA0pMwNV">营养包 OEM</span></td><td data-page-node-id="CFOwyyI2wpVNyuP3GqKGAa">高意向商业词</td></tr>
+        <tr data-page-node-id="dfdzdH4kEFnfPTM5rFTZrr"><td data-page-node-id="KqGegddGFO5JzQhEcTipJM"><span class="tag s" data-page-node-id="h5CM9PzZzDB3VuaN8iHrWZ">小批量代工</span></td><td data-page-node-id="XZgeCXrmklTDZWBOo8May6">核心差异化</td></tr>
+        <tr data-page-node-id="EwbGYKCnNnoUV3krzA6iv1"><td data-page-node-id="6gRV5a9ydg2H71XU9TiPHL"><span class="tag s" data-page-node-id="m3eNtD4MoWEqiZFRBgSzcy">保健品代工 避坑</span></td><td data-page-node-id="wPX3S2JgsX0OyqAxt0zfz8">高意向决策词</td></tr>
+        <tr data-page-node-id="HJlsAMeinE5ci6Z54DZsLa"><td data-page-node-id="IfYxhizeYoGaMHyuEV7GtB"><span class="tag s" data-page-node-id="9Zm6W3OoKRRlFPRbUWX058">代工 求推荐</span></td><td data-page-node-id="9nB624iTM9UCy2rR1AsyP3">直接找供应商</td></tr>
+        <tr data-page-node-id="TLqDrVHoVRxtcKls71lhjU"><td data-page-node-id="7eulNLzPijJKtyEllBIaYx"><span class="tag s" data-page-node-id="8GoQyZHCwHI7M1iadEyWP1">香港代工</span></td><td data-page-node-id="rPGaB5M1l7MlUscvWHk2te">高意向地域词</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub2" data-page-node-id="h6tRwWOpp6h82NCAHDb1TN">A 级 · 持续覆盖</h3>
+  <div class="tbl" data-page-node-id="35vuU6gZmeSmq23ZisFNQo">
+    <table data-page-node-id="Ebho6mdAedlu9ASV4Vc2df">
+      <thead data-page-node-id="aNph209D9mJ4T0YH7O8wtK"><tr data-page-node-id="WVcj8j8dNDdECiP1Z5lHrg"><th style="width:28%" data-page-node-id="3J8guETwFYNP1CnRFJ1J2G">关键词</th><th data-page-node-id="hDQl1C7HJpzzVGlQeytZO0">用途</th></tr></thead>
+      <tbody data-page-node-id="4BAsCN2cwdHsEEY0065zhm">
+        <tr data-page-node-id="0cd9s3oRgLbgstHqHnP4nq"><td data-page-node-id="RZKDoOBB5nR6nArEHKILF6"><span class="tag a" data-page-node-id="tqSpQhP1y1zzhiBZR9M4z9">保健品代加工</span></td><td data-page-node-id="V4R78LaqadVCV9xWx9xPb4">大类流量</td></tr>
+        <tr data-page-node-id="ByJWNixxdqyJmWDIuNSAFQ"><td data-page-node-id="ufjd8ovZXTApXtqtxE86ux"><span class="tag a" data-page-node-id="TjaWmUwN2r7hGsN1KJoPAw">营养品代工</span></td><td data-page-node-id="o5GuQJJjPYD1EguNE8DyvN">大类流量</td></tr>
+        <tr data-page-node-id="E0pjg5fZd50hbGAGXXg2fW"><td data-page-node-id="Sb2um7jzuSfPr4SBuM4Xqv"><span class="tag a" data-page-node-id="ONuDoEYIp56GHunXq9k246">保健品 OEM</span></td><td data-page-node-id="E33AJszydcGQN3YCob8dc6">高意向</td></tr>
+        <tr data-page-node-id="JHQLJFELkIPtt35q537W0G"><td data-page-node-id="kG1AERLwGcxAa8mwmge2RI"><span class="tag a" data-page-node-id="kQsOMbp55i226vDULGfupz">保健品贴牌</span></td><td data-page-node-id="0flHMxvlTRXlpYhXwd5HAg">高意向</td></tr>
+        <tr data-page-node-id="gef4qa07xMDEnHnbqH6jHE"><td data-page-node-id="7zSS2NLPEpOfvujKzhaNOc"><span class="tag a" data-page-node-id="HC5e4ZjYrQVp8pYh47WdYZ">香港保健品代工</span></td><td data-page-node-id="15PzwCw4I1aQrmEssknb5H">地域 + 行业</td></tr>
+        <tr data-page-node-id="7OzFFmHIxFFUwsDZ8afAYt"><td data-page-node-id="09UBsyNA7mtIOrREgbt3qW"><span class="tag a" data-page-node-id="BiUaHreP0IcwBwCXoio8w4">香港营养品代工</span></td><td data-page-node-id="sL1v9qqlEIuOKZWvdilR6t">地域 + 行业</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sub" style="margin:10px 0 0" data-page-node-id="x6EBmHlVbgWW4J6zf1Ngyo">目标：已经开始找厂家的人 —— 切供应商高意向池。</p>
+
+  <h3 class="sub2" data-page-node-id="DF0CiEliPdbAsT5Dl4MDMe">B 级 · 客户身份词（很重要）</h3>
+  <div class="tbl" data-page-node-id="0at59oRu4o8pnzhLKpeH6f">
+    <table data-page-node-id="BBjwVDpT8SHQ4vNYGxnbA9">
+      <thead data-page-node-id="C0Xeq8H76TiZGHP8ebZFH0"><tr data-page-node-id="dKKEOO9mkOV8VGhrqDTz5R"><th style="width:38%" data-page-node-id="4vObDvBl6kNASQDXIYie5E">关键词</th><th data-page-node-id="Fp2xxFXMuROJnA3xLUQd3W">背后的客户</th></tr></thead>
+      <tbody data-page-node-id="Fq78dAG8wXWAEVpBFPpEgX">
+        <tr data-page-node-id="hqQPPHyqrBmQPZUCXaXlc6"><td data-page-node-id="uD2DhhkDzF5EcR19diLLVO"><span class="tag b" data-page-node-id="Rr5fJk5r8vDpbBGX45u4FL">营养师怎么做自己的产品</span> <span class="tag b" data-page-node-id="JGBS8ExOpHZjjCkCfzwgXg">营养师做自己的产品</span></td><td rowspan="3" data-page-node-id="Vrer9x3XKIpETEILXFRYtq">「我已经有客户，但我没有产品。」</td></tr>
+        <tr data-page-node-id="fkzZIzmhecVikx8LDqcUZt"><td data-page-node-id="pY11u0uzWPfP97GgkvAfco"><span class="tag b" data-page-node-id="dj9fhRJyHPRcEgOFxydOOB">私域营养品</span> <span class="tag b" data-page-node-id="yKXSYCeXcOzH3pFcBu83XD">私域怎么加健康产品</span></td></tr>
+        <tr data-page-node-id="7iWyxkHob6bYZJwmufEFeu"><td data-page-node-id="MMX1dZEDNDiuOO64BnBJnc"><span class="tag b" data-page-node-id="Vmp1TrOokVIRTPBOWagU28">健康管理创业</span> <span class="tag b" data-page-node-id="AV8CyHXmQPkhrUCYePdLVd">健身房补剂</span> <span class="tag b" data-page-node-id="ebHZD5RcrgHf558ZiIc1c3">美业转型健康产品</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:16px" data-page-node-id="J3VtCLjo3B2nhCQTJLd2CW">
+    这类内容的价值不是单纯流量，而是 <b data-page-node-id="GBGaz4EQmGxD7SNY1AWwnh">把潜在客户身份提前筛出来</b>。我们的客户不一定搜「OEM」，他先搜的是「我是营养师，怎么有自己的产品」。
+  </div>
+
+  <h3 class="sub2" data-page-node-id="35hFh1GuYaXlO8pc7GrFuw">C 级 · 辅助词（可以做，但不能成为账号定位）</h3>
+  <div class="flow" data-page-node-id="k9gyqjM7l46f2vTzu8eozw">
+    <span data-page-node-id="DDg6HV8uS5LsLS6MQdd2Ck">一件代发</span><span class="arw" data-page-node-id="DHNQJNCkY0g2EDE3mXc8B0">·</span>
+    <span data-page-node-id="Tqc4zmSdpqwbGBdRnIcGZF">营养品一件代发</span><span class="arw" data-page-node-id="VsRVilVf4MZvcIUxe99kII">·</span>
+    <span data-page-node-id="Emn16kZXGC9bCawpgE3F41">保健品一件代发</span><span class="arw" data-page-node-id="aB2Nwd177HyNfVGqTxVK1f">·</span>
+    <span data-page-node-id="7YymfYxxHihHqwoDZa9ean">营养品云仓</span><span class="arw" data-page-node-id="rcfxVE09DIz4kC1VtsKxTb">·</span>
+    <span data-page-node-id="Jz5sWDnDAWyGOlaBJSlb8R">私域供应链</span><span class="arw" data-page-node-id="rjgez4CvmN5d7vrWVHIRwp">·</span>
+    <span data-page-node-id="MXiGGlXFAhKxWGgCITJMzE">营养品供应链</span><span class="arw" data-page-node-id="a92uaqAAUAsBS8ydQzXP32">·</span>
+    <span data-page-node-id="DIJRmzWakRHwFsuSvFsY2B">现货粒子</span><span class="arw" data-page-node-id="uCvOBaIuYeMkmrnFQB0b2k">·</span>
+    <span data-page-node-id="OcFSMgE1H1gMzG6QkMmX6z">营养品分装</span><span class="arw" data-page-node-id="y6mNshBjMPNG0NdloD0RZn">·</span>
+    <span data-page-node-id="kn7qgLpdyFvVYNUrDnPcUM">保健品分装</span>
+  </div>
+  <div class="callout" style="margin-top:16px" data-page-node-id="Q1dZvwkSho6iQIMNJKK4OD">
+    <b data-page-node-id="pPcaHi45OOCGkCDZTrWAA8">尤其「一件代发」：</b>它有流量，但容易吸引「我什么都没有，只想找爆品卖」的低质量客户。<br data-page-node-id="DYmnwCjGf42VJ2p6me6fXV">
+    所以把它放在 <b data-page-node-id="sZl7HuXmq5z65Dp5XyAssg">「供应链解决方案 / 履约能力」</b> 里讲，而不是把账号做成「一件代发账号」。
+  </div>
+</section>
+
+<section data-page-node-id="c6fVBq1IkkVEYIYKpdKKLt">
+  <h2 class="sec" data-page-node-id="H1ra2pqCA1VlRF24zdxQ8T"><span class="n" data-page-node-id="D2V1Ta3Gl0T4dNBKLeqIzm">05</span>一个账号，为什么可以打这么多词</h2>
+  <p class="sub" data-page-node-id="tFPTV8ZwAY9WWIhoIKRZWd">因为这些不是互相独立的内容栏目，而是同一个 B 端客户在不同阶段会搜的问题。</p>
+  <div class="tbl" data-page-node-id="RCY8TwWarBgreBsGYpTNLZ">
+    <table data-page-node-id="7eMtlDnQf9EBUVdMsiQwiB">
+      <thead data-page-node-id="iyi4sTOW1XfwSfhL0ddqMF"><tr data-page-node-id="OGGUVfa67atAFeXVyd0rNi"><th style="width:16%" data-page-node-id="ZIrNBzT3i2kCb7tNbHwyO8">阶段</th><th style="width:34%" data-page-node-id="ZEHnQTZLV5wU9KaJcEmtaL">他的想法</th><th data-page-node-id="ijpB6J2HHRNf9207KtFqcR">他会搜索</th></tr></thead>
+      <tbody data-page-node-id="DDb7OBNgOKsfMmX4cshU0D">
+        <tr data-page-node-id="Dy3jp9E5hnUU2Xwmv4I0tL"><td data-page-node-id="yXzHibrQBOOCbsm5agpOgQ">起点</td><td data-page-node-id="26cUxepOU1fDbJ10Ec2cUT">我想做营养品</td><td data-page-node-id="4puAYRq4UG8WLPHRQSJdlR"><code data-page-node-id="GjrHB75QtLQHY8kXII6pjN">营养品创业</code></td></tr>
+        <tr data-page-node-id="SoMQJ0IX7ZV0Xa03l6tU7j"><td data-page-node-id="YkZuQvSGiAuttkoCnRh1wh">找供应商</td><td data-page-node-id="LpNr1aq1AHOON6tk2pvQVV">谁能帮我做</td><td data-page-node-id="0HejiYlv721OvBbVALzr0P"><code data-page-node-id="2kZsaDK2WLmsFK53gWA7VT">保健品OEM</code> <code data-page-node-id="euFYqgkAbNyIvJjmk05M72">香港代工</code></td></tr>
+        <tr data-page-node-id="5d6BaXuad7Z79FHzPxSFUG"><td data-page-node-id="ryHf1E7AHB9eqvXGvGpKk0">门槛劝退</td><td data-page-node-id="oZparWDSaXYheSrLk6wTgQ">传统 OEM 的 MOQ 太高了</td><td data-page-node-id="b1BqDpEfq3YTmDHDdhcM1R"><code data-page-node-id="kSwU2unW7zTxO7hxVeu0qa">小批量代工</code></td></tr>
+        <tr data-page-node-id="ZkEbza4V0IZHr9QDS3mGz4"><td data-page-node-id="eTrNuLvBC3JxOgzOHXZQsn">降门槛</td><td data-page-node-id="nSziOk1BWb6IRhAWRjwBEn">有没有现货、粒子、分装</td><td data-page-node-id="jeNKHDtFjczYHXnTf0ILr7"><code data-page-node-id="Q3NEOJNDdowptOKC6ypCPn">营养品现货</code> <code data-page-node-id="dDB71mRHotjOmPVxtBbKlG">营养品分装</code></td></tr>
+        <tr data-page-node-id="qZ3u7pHdjKOgjY2HOwXfFP"><td data-page-node-id="4716mZ52cPAA4nFFXzIxOs">履约</td><td data-page-node-id="DJ7dbAgsObUw6GdNkTTyqb">我不想自己囤货发货</td><td data-page-node-id="vKvNi2qxKdlw2BO6hrU4PR"><code data-page-node-id="YHKl9DmHK0zE7QPo4DkjNd">一件代发</code> <code data-page-node-id="Swyx9RIoe9nYInAVPRnXwo">私域供应链</code></td></tr>
+        <tr data-page-node-id="Flq7QT1Rt1vvQF4pcXhreg"><td data-page-node-id="lKDLLMBYxdPSbQzwym85VY">定形</td><td data-page-node-id="zFJbPqSufIfWmwRSAMCsLQ">我要确定最终产品形态</td><td data-page-node-id="nmWVUJ1wVFjpNgMHER6ObQ"><code data-page-node-id="UyznIBCFwU6XJLVwBRcXMd">定制营养包</code> <code data-page-node-id="7X4bzCF6oYGCM8EYKnBDDF">营养包OEM</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:18px" data-page-node-id="1NkW5UElVLoYYhtR40WJlI">
+    <b data-page-node-id="VzcXeJQFoJH5RBQJdQfXCW">最终形成的认知：</b>「不是单纯找一个工厂，而是找一个能把项目落地的供应链伙伴。」
+  </div>
+</section>
+
+<section data-page-node-id="Efp3prRgj2z67suyzKbPlI">
+  <h2 class="sec" data-page-node-id="jz2N8xbr1RqK0v3u6vpUoB"><span class="n" data-page-node-id="uPo3x5LpEZAmF0aCLmJu00">06</span>9 月内容策略</h2>
+  <p class="sub" data-page-node-id="IMryWg2hH0HdMfDrsfUJy5">不是「第一周做 A 栏目、第二周做 B 栏目」，而是：一个账号、10 篇内容、连续覆盖客户的不同决策问题。</p>
+  <div class="grid3" data-page-node-id="FUwrpK7nqnZCZCJkrBH0Tf">
+    <div class="card" data-page-node-id="T7IEg3YX57J6kDew1M8pIt"><h3 data-page-node-id="8FCYFWqehDg9spB1I4vvm1"><span class="tag s" data-page-node-id="TJvM0hCH8aoBN9urQ2RsQ7">第一层</span></h3><p data-page-node-id="Jubl001oSgWhsKtDFaFbQg"><b style="font-weight:500" data-page-node-id="fOltXzvMupW9Nzr9GArCwO">让客户知道你们做什么</b><br data-page-node-id="8U07P0YpmtMNXLLvpoEsdu">9/15 定制营养包</p></div>
+    <div class="card" data-page-node-id="cWFQaht5BAsYvOAVzNTlKK"><h3 data-page-node-id="biECh54vnlyLPYltAt8Zyv"><span class="tag s" data-page-node-id="D3jLEVsOKqjztKFDBuXFVB">第二层</span></h3><p data-page-node-id="otmQFJ5gYzbBJei6NwnnVo"><b style="font-weight:500" data-page-node-id="9tHRg2Iuoj6ow2eYw21sG5">解决最大的进入门槛</b><br data-page-node-id="Mz0ahXG4lHh0Jo8dPt5D5i">9/17 小批量代工</p></div>
+    <div class="card" data-page-node-id="GdXmhV1HlVYKbDBqsffG1O"><h3 data-page-node-id="zuVEgg062dHAXyapPKtiPZ"><span class="tag s" data-page-node-id="FnsYvLyxQef5cbLV9u2HA3">第三层</span></h3><p data-page-node-id="u2YEH6ubt5I2FNFz1u0bGU"><b style="font-weight:500" data-page-node-id="TuPMdkn5kjp6Vnt9eBDAPp">抢进入筛选阶段的人</b><br data-page-node-id="rPHKR58pQ8bMQcg8gnO5WW">9/19 避坑 · 9/27 代工求推荐</p></div>
+    <div class="card" data-page-node-id="kWzU9xACtomf2yioLjODvV"><h3 data-page-node-id="26rLDQ2BKrHWrOSrAQ3aCF"><span class="tag s" data-page-node-id="jdoAyFlpGWyD0brutX09EL">第四层</span></h3><p data-page-node-id="P5IPPIs4TEoMlqP3QD5Obq"><b style="font-weight:500" data-page-node-id="ifijGcsxOq1UqSFTHQuj6H">建立地域差异</b><br data-page-node-id="yDIyG0SBlC1IEamEthc8KY">9/21 香港代工</p></div>
+    <div class="card" data-page-node-id="kVMlwE7qZBOqSOvZCmarZB"><h3 data-page-node-id="GkucmonzmzTGm2DMFfCGRO"><span class="tag s" data-page-node-id="x20JGwBTxkiuYoH6vwRFW2">第五层</span></h3><p data-page-node-id="5f5VsmMMHWxH0C8hF2iOov"><b style="font-weight:500" data-page-node-id="ln4UwZJ7cHMNcLSq011lnQ">说出目标客户的身份</b><br data-page-node-id="F2mNp3f1H4YCueoASQlG6x">9/23 营养师 · 9/29 私域</p></div>
+    <div class="card" data-page-node-id="kEOyVZIXs7GJ8Hup5Dfz4M"><h3 data-page-node-id="3l2FVrGpdbjtXYFHvUUWKK"><span class="tag s" data-page-node-id="j70Gw49RSp7TPGK7TvWTqh">第六层</span></h3><p data-page-node-id="IlHMcADydwbc8RwSBkE5xx"><b style="font-weight:500" data-page-node-id="v5C7ZAX17FS1ARVLa6ijMf">证明你们真的能做</b><br data-page-node-id="usnnDayuZW7JNJjxoGATQ6">9/25 营养包OEM · 9/30 完整供应链</p></div>
+  </div>
+  <div class="callout" style="margin-top:18px" data-page-node-id="fSoA03aSVqUNXu1DNHhGWL">
+    结果：客户无论从哪个关键词进来，都有机会继续看到你的其他内容。
+  </div>
+</section>
+
+<section data-page-node-id="OGitNcOOJ0h1OyxMFXZWvS">
+  <h2 class="sec" data-page-node-id="c2fRa12dVF6Bm8jAZO4UK6"><span class="n" data-page-node-id="GGuZznooOXBf9XSFkjghne">07</span>10 篇执行排期（9/15–9/30）</h2>
+  <p class="sub" data-page-node-id="ormrwpWSz9yPblXlnSMq0R">先看总表排期，再看每篇的完整执行卡 —— 可直接交给小红书运营。</p>
+
+  <h3 class="sub2" data-page-node-id="H77NaNQmcpQxlzp7ykVPap">总表</h3>
+  <div class="tbl" data-page-node-id="oCaoE3TWHo0COYFmn70m2V">
+    <table data-page-node-id="XhzCiiGWCywGyr7w0zU1HJ">
+      <thead data-page-node-id="BG3MdEDyCgnu1FbY9t3lVd">
+        <tr data-page-node-id="vPwpDsn8ISR3fePGbZ6VKP"><th style="width:9%" data-page-node-id="o6FsuKllWCsP0KJCJX6iKy">日期</th><th style="width:44%" data-page-node-id="86KDwalmmxWIAaQFblDq2D">标题</th><th style="width:24%" data-page-node-id="3LWur7lVvmrnPZGFhtiHXG">封面大字</th><th data-page-node-id="XmpNNY7T56E7VTPYvKseZT">主关键词</th></tr>
+      </thead>
+      <tbody data-page-node-id="9z11seg5yx3LTWF8QSQ3FT">
+        <tr data-page-node-id="QHlwqifgMGI0vjg7BiF6mK"><td class="date" data-page-node-id="vRXGZBbB9UaKm2GlBfyXBW">9/15</td><td data-page-node-id="baIuOiP3jbvErv4SUayU5O">什么是定制营养包？它和普通保健品到底有什么区别？</td><td data-page-node-id="dgCGR17AUfh712vnWZByWP">定制营养包 ≠ 普通保健品</td><td data-page-node-id="XCTwHNIXLLBMOsBpaQtNsy"><code data-page-node-id="L4sZAzEeEyq8GvDhEN3qXU">定制营养包</code></td></tr>
+        <tr data-page-node-id="DL4BK7rlsCq9krvLyIjDDp"><td class="date" data-page-node-id="zlBTRGoygsd01w2Ajq1tGR">9/17</td><td data-page-node-id="oRf6Is2L73p9XaKWA31E78">想做自己的营养品，但不想一次做几万件，怎么办？</td><td data-page-node-id="sqmvxoCOPzpKgwrwuYA5lo">不想一次做几万件？</td><td data-page-node-id="hEBBIt7NH08KzqokOtT8gd"><code data-page-node-id="p50RPgCR31D7YqIwDP6FEP">小批量代工</code></td></tr>
+        <tr data-page-node-id="b0AVWc6GZYz06TvUNqL6Yw"><td class="date" data-page-node-id="AmpUsYWo15eaDFomnMEszo">9/19</td><td data-page-node-id="SjjNvX7D9saDoVcPXVyKku">找保健品代工厂，报价越低越好吗？这 4 个坑一定要看</td><td data-page-node-id="AnEof0UcaKTm15SXoMC8lg">代工厂报价越低越好？</td><td data-page-node-id="KEBEllVNTnfNuSjDb4weOm"><code data-page-node-id="vyvCmD4D0yUbg827MbR9D5">保健品代工 避坑</code></td></tr>
+        <tr data-page-node-id="ln5W3N1NcVFZPbFhxASbIs"><td class="date" data-page-node-id="syFsbMRm8extyPAf2HSJMt">9/21</td><td data-page-node-id="nlJzdBGRAC2GqW2hMGYYnL">香港代工和内地代工，到底有什么区别？</td><td data-page-node-id="dBJLEENDmQ3g3ClkMFsqkg">香港代工，到底有什么不同？</td><td data-page-node-id="UuTGAX0lLq5VB45waNGNnO"><code data-page-node-id="wEiBEHEy6MzbRX6OWa6ESh">香港代工</code></td></tr>
+        <tr data-page-node-id="Cz2DAQMmSHFICqSlByEhKd"><td class="date" data-page-node-id="pwx0HzHe4RQ40CFGDECH5T">9/23</td><td data-page-node-id="26SRwymJSw1gmWIw0JmAsd">营养师手里有客户，为什么还需要自己的营养产品？</td><td data-page-node-id="9JtB9EKDVytGps5GNpVCUi">有客户，为什么还要做自己的产品？</td><td data-page-node-id="sKaonBKQBQxH9KTA7lKnte"><code data-page-node-id="a1z6milkIEX2AEsMvdgRAB">营养师做自己的产品</code></td></tr>
+        <tr data-page-node-id="QIXPrIzMVNKRSiOIGlN2eG"><td class="date" data-page-node-id="bguU9gGcCHNBZQVNhtM9FE">9/25</td><td data-page-node-id="semASuJ16TCrBEl2JXSB8H">营养包 OEM，真正能做的供应链要具备哪些能力？</td><td data-page-node-id="mkAaXbS4fEgBeC2LfPZYts">营养包 OEM，不只是装袋</td><td data-page-node-id="Hz91pxdMtvztfRU6UneFRy"><code data-page-node-id="gxx82SmFbOTvh2PiKMxGgm">营养包OEM</code></td></tr>
+        <tr data-page-node-id="nkr3HpEZXAxDS8EZITwm65"><td class="date" data-page-node-id="QgzKA9tQHwLgBSs5BDfxXL">9/27</td><td data-page-node-id="3ZUIqdECiHgF4av1o9XA0A">找保健品代工厂，不知道怎么选？我建议先问这 5 个问题</td><td data-page-node-id="k7nHpY8oHiZQJwspC27mEd">找代工厂，先问这 5 个问题</td><td data-page-node-id="n4P4IaCfeq5st4KarRKx3u"><code data-page-node-id="RU6Jkh5hxJeNiRIsRA6aAP">代工求推荐</code></td></tr>
+        <tr data-page-node-id="6heXwBmBnvBqCncNHJq6Os"><td class="date" data-page-node-id="DNfqk5ulCAsLKHEVwvbY5h">9/28</td><td data-page-node-id="YPES6MBMcz0C6OvA7Nz9oy">保健品 OEM 起订量为什么动不动就是几万？</td><td data-page-node-id="fXz9hGidA66raLIGGpH1DP">为什么 OEM 都要几万起？</td><td data-page-node-id="i3JAYNnfvKMSQ0UerUfmVn"><code data-page-node-id="ROcBygJHJaPnqtcc7ohX99">保健品OEM</code></td></tr>
+        <tr data-page-node-id="YXx62ZMb5exOHRbdcWmAb8"><td class="date" data-page-node-id="t6rfwk7AGKhMjH8wrBuLoW">9/29</td><td data-page-node-id="B2Bw2csHxIvmE6Xx9kKCPG">私域做营养品，真正缺的不是产品，而是后端供应链</td><td data-page-node-id="JKNQO7nJF9vPIqmRuApVJI">私域做营养品，难点在后端</td><td data-page-node-id="Fum3JI4YZO5XIxxoLM2lvX"><code data-page-node-id="vFTyqrbDFa4eSGtDPGvt7Y">私域营养品</code></td></tr>
+        <tr data-page-node-id="AUQgGdxVZr2brRQPfQiBPO"><td class="date" data-page-node-id="EPyQBKI6HJHFMWwMHORMHI">9/30</td><td data-page-node-id="c0CFgKUYwRBZMQMa6gxZKf">一个定制营养包，从产品到客户手里到底要经过哪些环节？</td><td data-page-node-id="Cn5ynsq5IOONvATidHzdyj">一个营养包怎么落地？</td><td data-page-node-id="AlTteogLdO1Qv4DI7AVp7r"><code data-page-node-id="1MIhKHaTR4dCUr4AnTTQT4">定制营养包</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub2" data-page-node-id="aqjnGJ6aVKrLLt65UdCpoi">单篇执行卡</h3>
+
+  <div class="post" data-page-node-id="T0xTEJj2gxMwEt27Uj9utr">
+    <div class="post-head" data-page-node-id="BqwHaGSCGoKMxnOYkZOz6t"><span class="idx" data-page-node-id="MfCRDghgnAlBglx9H9SKDb">01</span><span class="day" data-page-node-id="oqHrRKv8P8LUa7y78lAjg6">9/15</span><p class="ttl" data-page-node-id="4kF0AdcJ6YOF3zo4IXR1il">什么是定制营养包？它和普通保健品到底有什么区别？</p></div>
+    <div class="post-body" data-page-node-id="QCf5gjTUw4yfuCwohIv0Ke">
+      <div class="field" data-page-node-id="x2i1RTH5QD530noaN0wwce"><div class="k" data-page-node-id="u1QPEM08H9mdLfiva6AyQr">封面大字</div><div class="v" data-page-node-id="tFu5cbHIjsqex5xR9WC0EX">定制营养包 ≠ 普通保健品</div></div>
+      <div class="field" data-page-node-id="6M4plcb5qC2SLhip8HXXEK"><div class="k" data-page-node-id="e8B4wLmrmFqPMrg0koPwPU">必现关键词</div><div class="v" data-page-node-id="csKZmL3S3haP2qraCALASa"><code data-page-node-id="09pWoHzNmcAjGMGvTUSXDF">定制营养包</code> <code data-page-node-id="RV8CPguVUpVH1ByqLHhYsf">营养包</code> <code data-page-node-id="atdiSsyGaJMkjBzUF88oNB">每日营养包</code></div></div>
+      <div class="field" data-page-node-id="Z5kiHyW79uWH906sfECni6"><div class="k" data-page-node-id="TbstWDDU4TTOqKUr3hKqNC">3 秒开头</div><div class="v hook" data-page-node-id="OotUZm0D5VBmQLHLkUgqYO">很多人以为定制营养包，就是把几种保健品装进一个袋子，其实完全不是。</div></div>
+      <div class="field" data-page-node-id="wUeQb7MeQTKcpvZbOGfiAq"><div class="k" data-page-node-id="dQC7zh3abjUFMqQBHwk3yv">正文结构</div><div class="v" data-page-node-id="h75cBJRwbrKG26F7N8JFjt"><ol data-page-node-id="yG0WNJgESZ2ljLTSCmZsBF"><li data-page-node-id="61Hk0YMs0ECSg2zKrJ3NY3">什么是定制营养包</li><li data-page-node-id="yazqsOawgFQAyMPDgzB6s5">普通单品 vs 每日营养包</li><li data-page-node-id="Nm5NR1fg4jnKedzuUy1i0x">产品选择 / 颗数 / 剂型 / 包装如何组合</li><li data-page-node-id="HGhJqtGgPMjtCPpfNCep9R">适合哪些客户</li><li data-page-node-id="Gql9L1Qw9Oe1iULmTWpBj1">供应链真正难在哪里</li></ol></div></div>
+      <div class="field" data-page-node-id="3Qb3vNYCqIJNQ6IDFEi8pU"><div class="k" data-page-node-id="7zeYXgoNrECBdeFeoT6csD">配图 / 视频</div><div class="v" data-page-node-id="nNFGaxzAtEbsaeEwBHaaRZ">营养包实物视频：拆包 → 展示不同产品 → 装袋 → 成品。最好有真实订单 / 袋子。</div></div>
+      <div class="field" data-page-node-id="rXWQklCwzv38yMibtBMy35"><div class="k" data-page-node-id="pz8QaEF1OJq6S5R51WE5zg">私信引导</div><div class="v cta" data-page-node-id="qpeyg71ZAFe3tgtqwLhiQz">如果你也在考虑做自己的定制营养包，可以私信我「营养包」，我把具体合作方式给你。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="aHqd9NKk69sVcbmVEKKZBW">
+    <div class="post-head" data-page-node-id="bchwC4oG2VAKf4YXF0F0EB"><span class="idx" data-page-node-id="DhsjPaR8FZKBEf3JHhmAnS">02</span><span class="day" data-page-node-id="DnlIeJEsffFtfRQod9yuL8">9/17</span><p class="ttl" data-page-node-id="4T7WAEMnrwY6bMrvQTFdah">想做自己的营养品，但不想一次做几万件，怎么办？</p></div>
+    <div class="post-body" data-page-node-id="4ZT4N1tXpUG5phyrDz1D0j">
+      <div class="field" data-page-node-id="AxIet9yczpM4lrch8Z2p80"><div class="k" data-page-node-id="BKttvM0rJ4n0yzMjTpHqJ5">封面大字</div><div class="v" data-page-node-id="u1kwX6Li7dATL66mq0JXeq">不想一次做几万件？</div></div>
+      <div class="field" data-page-node-id="Ml8XOvUIjuFVG3iVPkuz6m"><div class="k" data-page-node-id="5PegqdLpNPRVgHKO7zXDxF">必现关键词</div><div class="v" data-page-node-id="HqZiTQ2LnVwtsexAv8U4ph"><code data-page-node-id="du4XK3MFyYyh6edcm0VtMS">小批量代工</code> <code data-page-node-id="ELt50gUEt9S7E5jAo8yueh">保健品小批量</code> <code data-page-node-id="X2r89kHs04F2phoGH9ptoL">营养品小批量</code> <code data-page-node-id="XvMArKUUwIjIj7QnK1aerv">低MOQ</code></div></div>
+      <div class="field" data-page-node-id="ZkCdwnPkblpyjemoiNPoDD"><div class="k" data-page-node-id="hEvB3qdnoiueNlXD3bcQDD">3 秒开头</div><div class="v hook" data-page-node-id="ArdkSn48e9OB7QztTs03m7">想做自己的营养品，最容易劝退你的，可能不是产品，而是 MOQ。</div></div>
+      <div class="field" data-page-node-id="6cVIBFHi2O5HOiLQcBic8C"><div class="k" data-page-node-id="TNRDsfrdOYh8x7fTJVZdQL">正文结构</div><div class="v" data-page-node-id="tmCoIFjUgTLUmgHDgm7vtt"><ol data-page-node-id="GmH4O05qB7STrts13lwwji"><li data-page-node-id="hDLo88AZ3wnmyAVAF36giB">传统 OEM 为什么 MOQ 高</li><li data-page-node-id="REaqIuBm6KYSbg5PlzpN27">大货模式适合谁</li><li data-page-node-id="JLqZGfBelLkZru7DbEfcu9">小批量模式解决什么问题</li><li data-page-node-id="t13jgnHDjBnzNBSqS5U5Hw">现货 / 粒子 / 分装如何降低试错</li><li data-page-node-id="gEvk1bF88ZVBwHOUKa4y7k">什么客户适合小批量</li></ol></div></div>
+      <div class="field" data-page-node-id="QhiRxsQIM6tOrMylBhGncy"><div class="k" data-page-node-id="vAcKQdKmytyZ6TguNrDi0l">配图 / 视频</div><div class="v" data-page-node-id="q10FuDFYUxTWv3hbSjc9tP">工厂 + 产品库存 + 粒子 + 包装；做一组「传统 OEM vs 小批量」对比画面。</div></div>
+      <div class="field" data-page-node-id="U8U53CYd0VKuCHz7F3Cfkc"><div class="k" data-page-node-id="cdhsDPMVJEkxyy697MAByn">私信引导</div><div class="v cta" data-page-node-id="1L748Q2JfN42CFIwcm2zml">如果你现在有客户、有渠道，但还不想一次压大量库存，可以私信「小批量」。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="WHWcdWkjenbrlfteL7MOZH">
+    <div class="post-head" data-page-node-id="1tZBMopxvzx3zCvcFErWWF"><span class="idx" data-page-node-id="vXmrNXuWJUk5etSQbnQd8H">03</span><span class="day" data-page-node-id="mPLDGSNg8tgZRSU6kiCvAx">9/19</span><p class="ttl" data-page-node-id="MfOSsPgvDEBjTEEYP04aRa">找保健品代工厂，报价越低越好吗？这 4 个坑一定要看</p></div>
+    <div class="post-body" data-page-node-id="ZFVcBmziaNS6ecY9wq4tJQ">
+      <div class="field" data-page-node-id="TCcOJ8YZAjd5KQgHJOsHR1"><div class="k" data-page-node-id="XCBmxQMamiNmnvo1pqiGjG">封面大字</div><div class="v" data-page-node-id="qkw8XW8OkuJyu24KLEJ8iQ">代工厂报价越低越好？</div></div>
+      <div class="field" data-page-node-id="92GHv8JxTxoTEknB4Hs3Yk"><div class="k" data-page-node-id="TgRYfV3odjLFoKaqRN0vt4">必现关键词</div><div class="v" data-page-node-id="HCWirmEJlRilKEXXlrgmrE"><code data-page-node-id="HIzvG7j1K4EoAre8oROEui">保健品代工</code> <code data-page-node-id="qJlH0GkJCqudACq69PCoA6">保健品代工避坑</code> <code data-page-node-id="YjX9FDYQMGhX44ww0Sihve">代工避坑</code> <code data-page-node-id="EcmSP1DdwCKyxytGFKrFYq">保健品OEM</code></div></div>
+      <div class="field" data-page-node-id="s2JEJKFtwpx6kccNq0XV6k"><div class="k" data-page-node-id="0jKZD36BeLbsaj55CNxDmr">3 秒开头</div><div class="v hook" data-page-node-id="AOoMnZndtBv2G4twx8s34T">找保健品代工，第一家报价最低，不一定是你赚得最多。</div></div>
+      <div class="field" data-page-node-id="slzWVZkJp3kUCXLaRogco4"><div class="k" data-page-node-id="5Zae46SPuLcNt9YwMrBgDs">正文结构</div><div class="v" data-page-node-id="DYeSIXIab5zTDTAOFRewvG"><ol data-page-node-id="Yx07nMx0csR00Dg3uI7FPm"><li data-page-node-id="D5OTeP4cZy1WXFFSXsIuL5">只看单价</li><li data-page-node-id="Lwb20FXbsn0D1SFlL2N3hf">只看 MOQ</li><li data-page-node-id="L3HG1hfB5a0EChBkONZBvA">忽略包装 / 分装 / 仓储等隐形成本</li><li data-page-node-id="5lbRtqpCCUkSnFypP5MRn1">只看生产、不看后端履约</li><li data-page-node-id="qiIFFKlleMVt2smt8WNdDq">真正应该比较什么</li></ol></div></div>
+      <div class="field" data-page-node-id="fMi0rxZ8MSMPmWqHfPO5jl"><div class="k" data-page-node-id="DbMUCoReyu94jcVCqT4eEV">配图 / 视频</div><div class="v" data-page-node-id="U4rzljLq2X7yBykPnUcXl9">报价单局部打码 + 产品 + 包装 + 仓库，用真实业务场景解释。</div></div>
+      <div class="field" data-page-node-id="UAaAXWm6KV14V29C5S35wB"><div class="k" data-page-node-id="dBIC5WKNf36ifR8AmSls8h">私信引导</div><div class="v cta" data-page-node-id="vhEf6ZrAQbACW71uYlj00V">如果你正在找保健品代工厂、不知道怎么比，可以私信「避坑」，我给你一个筛选思路。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="LhqQanR5lMYzFJuP6MLwX8">
+    <div class="post-head" data-page-node-id="eanPzwrZViPgk1iLZrsmHf"><span class="idx" data-page-node-id="Jh09ky2YSpsG24MW2aJVma">04</span><span class="day" data-page-node-id="2IG8wyYUL8Exk3y7zZXKBn">9/21</span><p class="ttl" data-page-node-id="GNh7ZvAIyhWwTWTJLc74CW">香港代工和内地代工，到底有什么区别？</p></div>
+    <div class="post-body" data-page-node-id="SJE7m64y3UAU09xvsrQBkq">
+      <div class="field" data-page-node-id="mYw2mXCOeWfS79EeEx2sUG"><div class="k" data-page-node-id="zRnlwG3i4DxH64gbrZYBLl">封面大字</div><div class="v" data-page-node-id="qFc0waA4w2nZr4nIdCVair">香港代工，到底有什么不同？</div></div>
+      <div class="field" data-page-node-id="mpSzYFWgBZG6uCJlSHsCdT"><div class="k" data-page-node-id="k3kwEa6pPwlYCtoNGSrU74">必现关键词</div><div class="v" data-page-node-id="EVkyDVLRQTDZx0z2HMEX7e"><code data-page-node-id="QgMsrVA3TLsJI1q0rZuDWa">香港代工</code> <code data-page-node-id="og1ZJ4kuVHAR49IfS2rdrm">香港保健品代工</code> <code data-page-node-id="c4ovqaOm5E0XLpXj6u4Swy">香港营养品代工</code> <code data-page-node-id="rmAl0XBK8iBKC9RPs1bH2q">OEM</code></div></div>
+      <div class="field" data-page-node-id="C0WyKINaU2FMQervOVKjNz"><div class="k" data-page-node-id="lVycSzkcX9hucPIvGUNW5O">3 秒开头</div><div class="v hook" data-page-node-id="CWTtHPCeyVidLMqhwgNsED">为什么有些营养品项目，会专门找香港供应链？</div></div>
+      <div class="field" data-page-node-id="zzZbkY1aDtiMH7JoB9jnJy"><div class="k" data-page-node-id="0wlAJCP2gx8xdiCYVdFx50">正文结构</div><div class="v" data-page-node-id="CnHD43Kvx8WCBe4ja508L2"><ol data-page-node-id="xNrwgOtjt8gQsDkDIn4FNZ"><li data-page-node-id="HGAlWvx32ooOSGWIxKq4xR">香港代工是什么</li><li data-page-node-id="JjwMHEdEADguh0tsvw37BI">香港供应链能解决什么问题</li><li data-page-node-id="IMXOygICosA2qdPEEu4P2a">产品 / 包装 / 仓储 / 跨境履约</li><li data-page-node-id="yPBcsqzhjSWPHYGwfMbY5M">什么项目更适合</li><li data-page-node-id="HXxewEDGlG02eNvzR3LMVd">不要把香港代工简单理解成「换个生产地址」</li></ol></div></div>
+      <div class="field" data-page-node-id="8eNcuYvXKnVGsKTJSrN9eM"><div class="k" data-page-node-id="UFKZBEUVchuLfqjvLrTgiC">配图 / 视频</div><div class="v" data-page-node-id="5SH8ecpKDPT83KpNVBbgjr">香港仓储 / 包装 / 发货 / 产品实拍，重点拍「链路」。</div></div>
+      <div class="field" data-page-node-id="YAW7mVLtpeMCklQKf36ips"><div class="k" data-page-node-id="q22B9y40r7pIADkD0o9f8b">私信引导</div><div class="v cta" data-page-node-id="p9e8V1IRXpzTq9GBoGiMbz">如果你正在找香港代工，可以私信「香港」，告诉我你的产品和模式，我帮你判断适不适合。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="HLN5HppAB1CMgHbBqv0BZn">
+    <div class="post-head" data-page-node-id="1x50ePpZjpZVrLCetP4yvP"><span class="idx" data-page-node-id="0WWDtb2CS2nE9L83h03VFe">05</span><span class="day" data-page-node-id="k5wIMRT77jOzpMkx4eCmEo">9/23</span><p class="ttl" data-page-node-id="EVy27lGQNukfGQAagFsX77">营养师手里有客户，为什么还需要自己的营养产品？</p></div>
+    <div class="post-body" data-page-node-id="NPty7kfnI1HCaaPqvUATyq">
+      <div class="field" data-page-node-id="a7A86Tv8Eq3cGauhbbgFiM"><div class="k" data-page-node-id="DNt8l5nSbiexGr3KLNhC3w">封面大字</div><div class="v" data-page-node-id="NKKbRLPiwDsFeJjWIic1Jx">有客户，为什么还要做自己的产品？</div></div>
+      <div class="field" data-page-node-id="OntARcZjsNF2yMtblggtWO"><div class="k" data-page-node-id="QQcJ8pLz7HkC4UnTHOupGP">必现关键词</div><div class="v" data-page-node-id="XLpsNauRsNo4LrRuDE9Aki"><code data-page-node-id="mGIpBT2taU6LVUfxQwYBEU">营养师做自己的产品</code> <code data-page-node-id="bIhEkENUtEHG4hfBDsCQKo">营养师创业</code> <code data-page-node-id="1KV9IwO0TkpiDxiYI4zNDr">营养品创业</code> <code data-page-node-id="hIUmNGGcqGFlPEcE9UDLVo">营养品品牌</code></div></div>
+      <div class="field" data-page-node-id="pYCB7xPGBaYMg3b3C4EVnq"><div class="k" data-page-node-id="gZjtDcRWDkhZlH17N8EB8r">3 秒开头</div><div class="v hook" data-page-node-id="eU7Zm7XsmVFz6ltGeiMFVt">如果你是一名营养师，手里已经有几十、几百个客户，其实你缺的可能不是客户。</div></div>
+      <div class="field" data-page-node-id="7D12o9r3yq5uPinGsO81Cv"><div class="k" data-page-node-id="Rdh883Wm63jMNiAfWVV9Kw">正文结构</div><div class="v" data-page-node-id="aXdFDWSC7WeWCi6zkV0E4j"><ol data-page-node-id="m2C7GkIU83bUqra7fGKOhW"><li data-page-node-id="X9RfKJ5nTTqEVhAQ2c0Vr5">客户已经在问产品</li><li data-page-node-id="bb5nr53imz9o5kBRjuxpaD">推荐别人的产品 ≠ 自己的产品线</li><li data-page-node-id="TMRuBAWo2Mp3x5bE7DbA9y">自己的产品线能解决什么</li><li data-page-node-id="cHyTnJ76iCP6u5pP0xCEmH">不一定一开始就做大货</li><li data-page-node-id="ghZAVwNd95wIUM5kRovuuR">可以从 1–2 个核心产品 / 营养包开始</li></ol></div></div>
+      <div class="field" data-page-node-id="Pq9xjNz7Znd8nlgS4CpPrs"><div class="k" data-page-node-id="tUJnj9XBdB6tws6r3PhHh0">配图 / 视频</div><div class="v" data-page-node-id="ccrE0Ls5qxK4k96cF5wccI">营养咨询场景 + 产品 + 营养包 + 客户服务场景。</div></div>
+      <div class="field" data-page-node-id="hkxQ5ZplTumd4AERynDo7S"><div class="k" data-page-node-id="K6VJHXVsBWvUtmeWOlnds8">私信引导</div><div class="v cta" data-page-node-id="ERaGP47WMPH7yVtxKLEJLt">如果你是营养师 / 健康管理师，手里有客户但没有产品，可以私信「产品线」，聊聊你的情况。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="koPTPtfQHeZ1idQ1tFxLNf">
+    <div class="post-head" data-page-node-id="EyCNrcubuM4iZwRepL8GwK"><span class="idx" data-page-node-id="Ha1XVI8xiYrLbIMm71hISZ">06</span><span class="day" data-page-node-id="L8OXRnm4P3XFeLNT9lLPrI">9/25</span><p class="ttl" data-page-node-id="fhiAuTMS1fc6LRJh505aCj">营养包 OEM，真正能做的供应链要具备哪些能力？</p></div>
+    <div class="post-body" data-page-node-id="s0LgMVEENWcF1gQwycyPG5">
+      <div class="field" data-page-node-id="ZFwyKnCuyrNyITRcsimAPZ"><div class="k" data-page-node-id="BF2dWTuCHKBUiCu4fKW3z7">封面大字</div><div class="v" data-page-node-id="jFPdASMMQbDoHrdkVXpuDU">营养包 OEM，不只是装袋</div></div>
+      <div class="field" data-page-node-id="BUsm5qQfeymJ6j2CgMmMRX"><div class="k" data-page-node-id="1Z6WL9WNkwyoO8luOC0JiK">必现关键词</div><div class="v" data-page-node-id="bLhVMx11W1nBWbznT4zdjd"><code data-page-node-id="I1oNe3R8ve5l8OuJsCWQzE">营养包OEM</code> <code data-page-node-id="EAJdjygStW9Loyhfrt1wja">营养包代工</code> <code data-page-node-id="QaSjPEHhbqynCP2YAMDsOM">定制营养包</code> <code data-page-node-id="PSf3hNHJXL9RLRBObchSHK">营养包供应链</code></div></div>
+      <div class="field" data-page-node-id="3ALDuL3LFGQLHkKYyWvtDj"><div class="k" data-page-node-id="t41yZ6WAoyKJbcQdwocC0v">3 秒开头</div><div class="v hook" data-page-node-id="Lpyrmfl1k4mMPL90KghQEi">真正难做的营养包 OEM，从来不是把产品装进袋子。</div></div>
+      <div class="field" data-page-node-id="mwffAplL6CZezSTo1Pbtmi"><div class="k" data-page-node-id="lrFmpTZqblAG7kU8tukDjn">正文结构</div><div class="v" data-page-node-id="aa8jJ0Xmixj9q0kQDQPP0s"><ol data-page-node-id="3GUCeRsMNJ84tLTtXoQZuX"><li data-page-node-id="qKSk0OEAFxB0RxOZOdjqCV">产品供应</li><li data-page-node-id="r6P6GIXH4xoCLy17ui9HVH">剂型 / 颗数组合</li><li data-page-node-id="GCuBGCAVjBL5yoAXqubyhA">包装定制</li><li data-page-node-id="6WD3FB0KAe0llPBrB1L6Sr">分装</li><li data-page-node-id="XfE9wVSu89qL8RQBKInSKx">批次 / 有效期 / 检测资料</li><li data-page-node-id="IpPe0JfWTspFnXfWMMAvvr">仓储</li><li data-page-node-id="rGEXTXcEPpLa4DqoeT7dUZ">履约</li></ol></div></div>
+      <div class="field" data-page-node-id="Cqe6hKrkYvBQ56ahvKG0u0"><div class="k" data-page-node-id="QEn4xwnvjBKkK9W9HS0J3H">配图 / 视频</div><div class="v" data-page-node-id="p8U6CcEMVd3plyTbRRXX4y">一条完整流程视频：产品 → 组合 → 包装 → 分装 → 成品 → 仓库。</div></div>
+      <div class="field" data-page-node-id="GdFHo2P2tRwERi7YHliRxv"><div class="k" data-page-node-id="1Fn4cGqfDnB4ShhrA93rkH">私信引导</div><div class="v cta" data-page-node-id="J3dVGFtcpo8iAG6TnoAzQd">如果你想做营养包 OEM，但不知道供应链需要准备哪些环节，可以私信「OEM」。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="MvDqRTWQVwL3sCQG5OmemB">
+    <div class="post-head" data-page-node-id="FRzMdmf8HoLSKO8rurZmiD"><span class="idx" data-page-node-id="TuI37MWvwJF2xUuCjHDpY6">07</span><span class="day" data-page-node-id="2lBsh6Es6cJAHjbAhe56Ay">9/27</span><p class="ttl" data-page-node-id="QnrCmnMKDx1ndpe0b0A8cE">找保健品代工厂，不知道怎么选？我建议先问这 5 个问题</p></div>
+    <div class="post-body" data-page-node-id="KDznEBJcduD1PDZ3Ab0xfw">
+      <div class="field" data-page-node-id="UAzXuvCeXrmTmR9vK8I99N"><div class="k" data-page-node-id="IFcUC1XqNEhh45TgrFA7Yz">封面大字</div><div class="v" data-page-node-id="Wcq3rmaSgAUWmwA3R1vyzb">找代工厂，先问这 5 个问题</div></div>
+      <div class="field" data-page-node-id="zg5sKJhRRHmGuoV8aip0Jo"><div class="k" data-page-node-id="iUUY5WIG71h1Hk3E4kk2ec">必现关键词</div><div class="v" data-page-node-id="V963iZLQ32eWFbuJcSBE3s"><code data-page-node-id="SuWVA8Tp8chGR6fUnvZxQE">代工求推荐</code> <code data-page-node-id="tC2AukURLIXK1dduuCMIva">保健品代工</code> <code data-page-node-id="acHyXF2dMJLnrS98q465nm">营养品代工</code> <code data-page-node-id="1BUR13CBpV1BOed1dDZj5s">保健品OEM</code></div></div>
+      <div class="field" data-page-node-id="5KBMAwuHHGn3uhOkFAOctx"><div class="k" data-page-node-id="stHUoiCPXdw3z5tQkpx3Zo">3 秒开头</div><div class="v hook" data-page-node-id="dvgGCx30AwfNbKiv34J08K">如果你准备找保健品代工厂，不要第一句话就问「多少钱一瓶」。</div></div>
+      <div class="field" data-page-node-id="Co7PKf3NEroseuNm9k1kqg"><div class="k" data-page-node-id="0BpKcJH9LQWiE2ZsorVIqH">正文结构</div><div class="v" data-page-node-id="UZyjMcIgBkmvVMuc4mnca2"><ol data-page-node-id="N2hsSnFRF78ICrHwYnwpe9"><li data-page-node-id="70qZxkQFx1j4msYwGphHE1">MOQ 多少</li><li data-page-node-id="5Nz5rIgAMhgxEPsGqx3O8Q">现货还是重新生产</li><li data-page-node-id="eya5oS6q2dnrmL3BA7SD6i">包装怎么做</li><li data-page-node-id="D45woJ4G9wNFcWAvwDXFSZ">后续仓储 / 发货谁负责</li><li data-page-node-id="zM5uWIMIV2dcZCntPcMEHf">批次 / 检测 / 资料怎么配合</li></ol></div></div>
+      <div class="field" data-page-node-id="dfwVtWPVBQe3VxS7rHA7J4"><div class="k" data-page-node-id="l60S1AVcitKH8nGRKh8vnA">配图 / 视频</div><div class="v" data-page-node-id="rv1gbWYuuyUicOEzCElgEM">运营做成 5 问卡片，每个问题配真实工厂 / 产品画面。</div></div>
+      <div class="field" data-page-node-id="mhRX9xJt68X2dBE0exOtCW"><div class="k" data-page-node-id="wt0KO9A1VAiS3hYw8M3QFF">私信引导</div><div class="v cta" data-page-node-id="EPhxbDmAOKePEDUlbAB865">正在找代工厂的，可以私信「推荐」，把你的需求告诉我，我帮你看看应该找哪一种供应链。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="ExAaKObmTS4kReD2euzkWq">
+    <div class="post-head" data-page-node-id="HsZwMdZ06gTGdqCP1nsCpV"><span class="idx" data-page-node-id="G3vXGcNVdgX71Z3fS5OKcN">08</span><span class="day" data-page-node-id="Wtg0kDbsGEKEfRDAs4FC4M">9/28</span><p class="ttl" data-page-node-id="3bPgz8dwJwp5KHvwOTHoaN">保健品 OEM 起订量为什么动不动就是几万？</p></div>
+    <div class="post-body" data-page-node-id="ocyYjDaMQbVuT0QJCvp16I">
+      <div class="field" data-page-node-id="IrTebCgpwqDskxRMyOHDIZ"><div class="k" data-page-node-id="6EPFkKJPV1drl07mmCBdQL">封面大字</div><div class="v" data-page-node-id="vb26tdgzdHAtyhQusmR0QJ">为什么 OEM 都要几万起？</div></div>
+      <div class="field" data-page-node-id="Fs72NHZPQ7ksQ9NgDFTdpP"><div class="k" data-page-node-id="VK0Chet80ig2fYMgFBVcAp">必现关键词</div><div class="v" data-page-node-id="Dvc9ZvtUTkGC3WxhULma2S"><code data-page-node-id="bC6dlxiZgY7NV41114QNoP">保健品OEM</code> <code data-page-node-id="4tBjmRBtBfVI59708zR41w">OEM起订量</code> <code data-page-node-id="5q11PrRlsKlRA4NZ2i2lTO">小批量OEM</code> <code data-page-node-id="uvr7KiF4PGDU3NAJgheLZP">低MOQ</code></div></div>
+      <div class="field" data-page-node-id="iU7HNHgF7dC78wSmFtUT12"><div class="k" data-page-node-id="nRCNmOGDJ1YugCQbZKdOQO">3 秒开头</div><div class="v hook" data-page-node-id="XOOV9NSnZeChvjiiSBIgyf">你去问十家保健品 OEM，可能八家都会告诉你：几万起订。</div></div>
+      <div class="field" data-page-node-id="F3y4ABqTeHSmLxmuen0FCB"><div class="k" data-page-node-id="RWPLRGCbKYKdPEsZEB1lrY">正文结构</div><div class="v" data-page-node-id="va5aWtC61oJeFazUk2isak"><ol data-page-node-id="CH4BLNQ7BFsIHHxGvcWVPz"><li data-page-node-id="CFkesc6bwtp2EjgXgWyzkb">为什么 OEM MOQ 高</li><li data-page-node-id="yGAWWWoSJejTyFCeQIADxZ">开模 / 生产 / 包装 / 物料等逻辑</li><li data-page-node-id="icmkrFTDqbfby5TTgg443A">为什么现货 / 粒子模式不同</li><li data-page-node-id="XfgBSLeUXznQFs5TJAYaL8">什么情况下没必要做大货</li><li data-page-node-id="8pPHXoQVrux1ASdr6G26sH">如何降低第一次试错成本</li></ol></div></div>
+      <div class="field" data-page-node-id="3KSwJBBRFq0VsivN8DkPJV"><div class="k" data-page-node-id="ux2mRcvxsHb56wizMkRbOn">配图 / 视频</div><div class="v" data-page-node-id="Bmp2TQObTXVrWCg2ecDzwb">生产线 + 包装材料 + 产品库存，可以用数字 / 流程图解释。</div></div>
+      <div class="field" data-page-node-id="IG1D5FUuCMQdsdqPUHdLFo"><div class="k" data-page-node-id="JfMiWJsATxOF26WmTSpEEF">私信引导</div><div class="v cta" data-page-node-id="6Deni9bYSb4FTblDFd8KZD">如果你现在还在测试市场，不确定该不该直接做大货，可以私信「MOQ」。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="KkHOWdZ8ryuYumEqnfsKrq">
+    <div class="post-head" data-page-node-id="QOuvxSKTevZ8V4PXG2fHGs"><span class="idx" data-page-node-id="39nSqgUPSUoKAGL5wSgCai">09</span><span class="day" data-page-node-id="QYl6gZDujqxc9oO2VCTKhl">9/29</span><p class="ttl" data-page-node-id="HlJI7KshZwBnXFCtTxOb8A">私域做营养品，真正缺的不是产品，而是后端供应链</p></div>
+    <div class="post-body" data-page-node-id="zEV35Mc8jBN18kuEoH5tzs">
+      <div class="field" data-page-node-id="IhNlTXT2b3wlRGD1O1cI2T"><div class="k" data-page-node-id="jdmz3wRYx2BUNkNB8lKB7V">封面大字</div><div class="v" data-page-node-id="HGjEtarbWAEWXNJ2uCaK6W">私域做营养品，难点在后端</div></div>
+      <div class="field" data-page-node-id="WT76wyuc9BIttPmIBchTEn"><div class="k" data-page-node-id="1iFyLOQynwxCtpUxbKoUB3">必现关键词</div><div class="v" data-page-node-id="1Lh074dGIiNItPsgCabvUh"><code data-page-node-id="EvxB6bPeeqT5ElVn5uiSFx">私域营养品</code> <code data-page-node-id="nE6HOGaeUbRKCgoOjv4KJY">私域做营养品</code> <code data-page-node-id="EJRBv8FccCiHd7jrhKoyiY">私域供应链</code> <code data-page-node-id="bVZjnr81518Hxey14ZuHcG">营养品供应链</code></div></div>
+      <div class="field" data-page-node-id="Bz13CpCPA3aO07TlJpqlOL"><div class="k" data-page-node-id="Iq8MjeCiW3dGaGBeH88biG">3 秒开头</div><div class="v hook" data-page-node-id="JgqAjqLGNPP1oxsCQ9aZlO">很多私域老板以为，找到一个产品就可以开始卖了。</div></div>
+      <div class="field" data-page-node-id="ISoxsU7h5MIEMI1RVnvbOU"><div class="k" data-page-node-id="xSwEO5FaPPmJx8Q52zYWXB">正文结构</div><div class="v" data-page-node-id="ifEuDVRF1Zs3LtAO85MvgK"><ol data-page-node-id="8Mugjo0xmwEyUSCfjiGX92"><li data-page-node-id="EtWa2yEtE1PDsOETXVl9r1">产品只是第一步</li><li data-page-node-id="KrIBNjWNCnpiUhlB970PSQ">持续供货</li><li data-page-node-id="bbwSQ5O8RFqo0N91CRcDnW">定制包装</li><li data-page-node-id="vJbXt1EmzKirGHH7dJ9Jrd">库存</li><li data-page-node-id="H6dRO0j1IO3NCMjVij1XF9">分装</li><li data-page-node-id="RypgIbKFoVVOwfKTBd4jrD">订单履约</li><li data-page-node-id="7pFkoBuiBOFTgvxHk1J8Gf">售后 / 批次管理</li><li data-page-node-id="mKhkkq4VopfEN4xNcISRQM">为什么供应链决定能不能长期做</li></ol></div></div>
+      <div class="field" data-page-node-id="kgJDHECnRQEFH56rh3NA7r"><div class="k" data-page-node-id="C7oyejEI2eTDMuuBcbjQ8k">配图 / 视频</div><div class="v" data-page-node-id="lU1eiekXHfWw30KTkMBPKI">订单打包 / 仓库 / 产品 / 发货视频，强调真实履约。</div></div>
+      <div class="field" data-page-node-id="l8jpv6jO8tdwqfPJvJpsOq"><div class="k" data-page-node-id="43LCBeMhdqHXlldtXLc3e4">私信引导</div><div class="v cta" data-page-node-id="UT4yapRdVi7f06o2vdB7G5">如果你已经有私域客户，想增加一条营养品产品线，可以私信「私域」。</div></div>
+    </div>
+  </div>
+
+  <div class="post" data-page-node-id="nz0CAH0M7w7PC2Z36AH0L7">
+    <div class="post-head" data-page-node-id="7yN1dgHOXeCB8n1LnJyXpE"><span class="idx" data-page-node-id="aOSfFx17aZNrc4xXd90a3X">10</span><span class="day" data-page-node-id="klKBVOZ52D11OKIxFt0a0o">9/30</span><p class="ttl" data-page-node-id="h6ogZRQlHVUvxip3CbcOj4">一个定制营养包，从产品到客户手里到底要经过哪些环节？</p></div>
+    <div class="post-body" data-page-node-id="3Fyol6AHatsatqRxhL3J6X">
+      <div class="field" data-page-node-id="p3SnxfI4bmXONOAqHDFP8D"><div class="k" data-page-node-id="LPCKjRS5gCUB3tz4iWPSTP">封面大字</div><div class="v" data-page-node-id="LjGrse4Wy7DnxWjYv3bsFD">一个营养包怎么落地？</div></div>
+      <div class="field" data-page-node-id="D0b9mOuXieqteiy4ciJFRN"><div class="k" data-page-node-id="MAuCJDDbGZE0r91yDy82nZ">必现关键词</div><div class="v" data-page-node-id="RiJ4FHig6Fm6Gvqd863DAb"><code data-page-node-id="zomRu1pMWQEEZdqq3Hs07s">定制营养包</code> <code data-page-node-id="bVV7OW8ncbn6mKqjbj8R9O">营养包OEM</code> <code data-page-node-id="FLnpprGTZep0rCzeDVwRXO">营养包供应链</code> <code data-page-node-id="OIwVy70lIhK2PPPsjGf7ln">营养品分装</code></div></div>
+      <div class="field" data-page-node-id="QdhAgVsFacuoJEJwJGgHuq"><div class="k" data-page-node-id="3AAGR62CSABGOtHA9EB4Us">3 秒开头</div><div class="v hook" data-page-node-id="koTjAeCodLH0OCKbpkUXJR">你看到的可能只是一袋营养包，但它背后其实是一整条供应链。</div></div>
+      <div class="field" data-page-node-id="Bp2nq4XxQcOKNe55xDd8ve"><div class="k" data-page-node-id="cVQ2UqtQWM18bNHGZZdRqi">正文结构</div><div class="v" data-page-node-id="7f83Q9pU6TOFcFHMYcnXmD"><ol data-page-node-id="PKSi09IxH8yJ2FxE2zt3yB"><li data-page-node-id="BUdMADQePyBQeEH5ll0vJF">客户需求</li><li data-page-node-id="86592PcfKnLvwOPxrIM6fo">产品选择</li><li data-page-node-id="CWzylslaqZMEcTrWebDJ6d">剂型 / 颗数</li><li data-page-node-id="TQqJe4wpy5amGZxrQAJXBy">包装设计</li><li data-page-node-id="LH5JFl8zwDwTmPdqQBA3qZ">产品组合</li><li data-page-node-id="l8ukCH6FqKS77h2SQHCN91">分装</li><li data-page-node-id="zRVEnrOTVPuzeqE8JGmc50">批次 / 有效期</li><li data-page-node-id="aoru86FxZ3Hj0ZEdrXD5h7">仓储</li><li data-page-node-id="PBVjebPuQ37UgnQXLSakub">订单履约</li><li data-page-node-id="kLQ1pgEnWaRwgoyGnvByat">最终交付</li></ol></div></div>
+      <div class="field" data-page-node-id="13Cl6Qd9TSLJ7pYZTaLvJL"><div class="k" data-page-node-id="U4Bn6EGM9U249b2Jv27exp">配图 / 视频</div><div class="v" data-page-node-id="El7ItcoqB9FkpFmtrIu2ZL">整条链路拍成 1 条视频 —— 这是月底最重要的一篇「能力证明」。</div></div>
+      <div class="field" data-page-node-id="rScz5pkTGN9L1pxR1l8gSF"><div class="k" data-page-node-id="wkU7QhuprqGp3fnOsXO03N">私信引导</div><div class="v cta" data-page-node-id="5am6TKssFeCkDzHnW55mop">如果你想做自己的定制营养包 / 营养产品，但不想自己搭供应链，可以私信「定制」，把你的想法发给我。</div></div>
+    </div>
+  </div>
+</section>
+
+<section data-page-node-id="CsO90qfEHEMGkNUN7JlcKh">
+  <h2 class="sec" data-page-node-id="qSMES6mtl9WPKR05izwJGR"><span class="n" data-page-node-id="xoa32qEyFkEkvt3jUTz67f">08</span>运营必须统一执行的 4 条规则</h2>
+  <p class="sub" data-page-node-id="zl5Y2Uqybwgau4e5BVHi7a">这 4 条不执行，上面 10 篇的效果会打对折。</p>
+  <div class="card" data-page-node-id="tGPZIG7U6F7pF8MCmpIWAB">
+    <div class="step" data-page-node-id="XrpD6jjegvckX68FqQ5m5l">
+      <div class="i" data-page-node-id="rSyNQ964nANhUi5kPLyh0P">1</div>
+      <div class="b" data-page-node-id="pvr7Du64kQGjpdVbmAU3F3"><b data-page-node-id="RZOVVvHKIBwX6m40cuvak9">标题必须优先考虑搜索词，不要为了「文艺」删掉关键词。</b><br data-page-node-id="5W8OJSeSkFAqGP2WRyGRnZ">
+        <span class="no" data-page-node-id="GbDcPWB8pSMMTB244gLDYx">✕ 一个营养创业者的供应链思考</span><br data-page-node-id="FxbHTDiFLRJluRdewdMAFb">
+        <span class="yes" data-page-node-id="Tiq00PQtdXA0OWdlwxjRMD">✓ 想做自己的营养品，但不想一次做几万件，怎么办？</span><br data-page-node-id="bIl9581MM2k25SolMmZ2gt">
+        <span data-page-node-id="DNJhgK6Ja9YRQgjuqSEq04">后者直接对应客户的搜索问题。</span></div>
+    </div>
+    <div class="step" data-page-node-id="8Nqwblfep50VQ7lkuVqMND">
+      <div class="i" data-page-node-id="ESQIYE9CH4R8D9a1DsrBhf">2</div>
+      <div class="b" data-page-node-id="H7hFKlKbrzPFz5rdGYsrOe"><b data-page-node-id="YG5sX9B9t8GuMSPhbz2j2q">一篇内容只设一个主关键词。</b><br data-page-node-id="CvBfr6EALwOB49mVfFXQxD">
+        <span data-page-node-id="BzKCDC6ZOnUt8W0ppvJEq0">比如 9/17 主词是「小批量代工」，正文可以自然出现保健品小批量、营养品小批量、低 MOQ、营养品现货，但不要在标题里硬塞一长串词。</span><br data-page-node-id="5BoEOHBnc5oFi66864A01r">
+        <span class="no" data-page-node-id="6RTTZdckK90cWn7nkzfE17">✕ 香港保健品OEM小批量代工营养包一件代发现货供应链</span></div>
+    </div>
+    <div class="step" data-page-node-id="cpp1uCsiBecHLW5EcMJI25">
+      <div class="i" data-page-node-id="H8sjznW9CMHfmSENFWWeIq">3</div>
+      <div class="b" data-page-node-id="0VYY6JsXJA48PD2fHhPx5f"><b data-page-node-id="GbOjqi2RZo7WnQak3cF2HB">每篇必须有真实业务素材，不要坐在办公室「编内容」。</b><br data-page-node-id="Rgtxm6IIh2mLSNNDEzHrW3">
+        <span data-page-node-id="MpTwX6WnAvMj6DaDivQLmf">尽量拍：产品、粒子、包装、分装、营养包、仓库、打包、订单、出货、客户案例、实际项目过程。</span><br data-page-node-id="c00rThQGtaW4aOe5dkT6ZV">
+        <span data-page-node-id="5QYScl7Hr6iGp2vLnW8FDF">我们真正的优势本来就是供应链的真实能力。</span></div>
+    </div>
+    <div class="step" data-page-node-id="aman3oQF2JDSc4YGaMykTc">
+      <div class="i" data-page-node-id="ZdeHD8IVVoNvGdUHIjp23t">4</div>
+      <div class="b" data-page-node-id="q3C5ZfGs3FxUXJ34st5lfS"><b data-page-node-id="keejmPekwaRrXyUytvMvA0">每篇内容都要有「谁适合」。</b><br data-page-node-id="5VT2VNczZwJlIeJH6vy3Yr">
+        <span data-page-node-id="qHizNszpeqjj1I9gQUf6E9">例：「这类方式比较适合已经有客户，但第一次做自己的营养产品的人。」</span><br data-page-node-id="pdfcNWxyXLnKzbtJQeAc9F">
+        <span data-page-node-id="sV9bGnmPrQBAZAzsTR4fFv">客户会自动判断「说的就是我」，而不是所有人都进来。</span></div>
+    </div>
+  </div>
+</section>
+
+<section data-page-node-id="ALnA47kE917MZH8dvjNhyL">
+  <h2 class="sec" data-page-node-id="waLWNuFGDWklXVaE9J2CaV"><span class="n" data-page-node-id="1E0II7oVRY5IYljj1vb9TM">09</span>KPI 分三层</h2>
+  <p class="sub" data-page-node-id="T8hZbDQVHH4gQidnELqjLy">这个月的指标不应该只是「阅读量」。</p>
+  <div class="grid3" data-page-node-id="leoDFv29bTXLz3r7qUzAW4">
+    <div class="card" data-page-node-id="HBCGPtHP8lC88DDgkLF5B5">
+      <h3 data-page-node-id="rLu0NESaAseYCwToh5HLvd"><span class="tag s" data-page-node-id="sHEvgN2X2WUkzz8ZsxEPFB">第一层</span></h3>
+      <p style="margin-top:8px" data-page-node-id="IhlXYgT2qa2YkvmPlCoO0N"><b style="font-weight:500" data-page-node-id="5qQM7ogv5ayk5MF2IUxX58">搜索覆盖</b></p>
+      <p style="margin-top:6px" data-page-node-id="PwRFlTn4Xuf8Fq3XI8YUpl">有没有覆盖：定制营养包 / 小批量代工 / 香港代工 / 保健品代工 / 营养包 OEM / 代工求推荐</p>
+    </div>
+    <div class="card" data-page-node-id="yDJLzfVIVx61objAk1aC3f">
+      <h3 data-page-node-id="PLWYV47G8vCzWfTLe0ZNFt"><span class="tag s" data-page-node-id="F7bI6HjmAEXhNfXyy5OUjQ">第二层</span></h3>
+      <p style="margin-top:8px" data-page-node-id="aspx1jzWzP2iOJnDrNsciF"><b style="font-weight:500" data-page-node-id="2oy1usRaLzpIqLffQtel6B">精准互动</b></p>
+      <p style="margin-top:6px" data-page-node-id="EwjdEfTjgVdn4eIGVDCYhB">收藏、私信、评论咨询；以及评论里出现的「多少钱」「怎么合作」「MOQ 多少」「有没有现货」「怎么做营养包」</p>
+    </div>
+    <div class="card" data-page-node-id="izSEWuH5V2SRWgGdHa9D1V">
+      <h3 data-page-node-id="0xwmeIb1xuy7hHfTyWX4dR"><span class="tag s" data-page-node-id="0FGImk0xhPsv3G7i7vT7bs">第三层</span></h3>
+      <p style="margin-top:8px" data-page-node-id="G2LxuSxJMehkccqNpqu2TJ"><b style="font-weight:500" data-page-node-id="K5qcpbDV4sbX6H1hh0QIEh">有效 B 端线索</b></p>
+      <p style="margin-top:6px" data-page-node-id="E2cnYxnS6bTYayceMWdS4M">判断标准不是「这篇爆没爆」，而是 <b style="font-weight:500" data-page-node-id="U0uwk4ZZ4434p2B3yn9RL6">有没有人因为这篇内容来问合作</b></p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:18px" data-page-node-id="iDLLP6AFR9xSn6tTWCrNxC">
+    第一阶段先建立关键词矩阵，再通过约 30 篇内容验证哪些搜索需求真正带来合作咨询 —— 而不是单纯追求内容数量。
+  </div>
+</section>
+
+<section data-page-node-id="NlnDDEAzX7k4K41oF1aCiK">
+  <h2 class="sec" data-page-node-id="KU6WX7gBBZmawX9Al4xTEN"><span class="n" data-page-node-id="KWGHZehyI62U3JDQjXluLg">10</span>一句话汇报话术</h2>
+  <p class="sub" data-page-node-id="GbBlSoN34sXlJ6RNvqhaE2">如果只有一分钟，就讲这一段。</p>
+  <div class="quote" data-page-node-id="LnLZSe9LlMtANgerNNgbK1">
+    小红书账号不做成单纯的「香港 OEM 工厂号」，而是围绕 B 端客户从 <b data-page-node-id="Ji15ri5Q2dkTkkQnDgm5pv">「想做营养品」</b> 到 <b data-page-node-id="BhO0mEjKeoI2IaGBmI2G3u">「找供应商、降低 MOQ、找现货、做定制营养包、解决仓储履约」</b> 的真实搜索路径，持续覆盖高意向关键词。通过 10 篇内容反复强化 <b data-page-node-id="GIIJAwctkZjeMgU0TrPCOE">「定制营养产品找我们」</b> 的认知，最终把小红书从流量平台变成<b data-page-node-id="MEWNTo0GyGXIDtLk102MNX">营养产品供应链的 B 端获客入口</b>。
+  </div>
+</section>
+
+<footer data-page-node-id="0x2IHz2ZIASQLlV714zy9l">小红书 B 端获客内容方案 · 汇报版 · 2026 年 9 月</footer>
+
+</div>
+</body>
+</html>
